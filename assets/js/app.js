@@ -191,7 +191,8 @@ category_examples = {
             },
             {
                 'key': 'compose',
-                'label': '"Person <span class="masking-kw" style="color:#9b59b6">Stronger</span>" Slider<br>"Campfire <span class="masking-kw" style="color:#f39c12">Smaller</span>" Slider',
+                'label_top': '"Campfire <span class="masking-kw" style="color:#9b59b6">Smaller</span>" Slider',
+                'label_bottom': '"Person <span class="masking-kw" style="color:#f39c12">Stronger</span>" Slider',
                 'arrows': ['#9b59b6', '#f39c12'],
                 'image': 'compose.png',
                 'videos': ['compose_1.mp4', 'compose_2.mp4', 'compose_3.mp4'],
@@ -962,52 +963,49 @@ function renderMaskingBlock(div) {
         const group = groups[i];
         const arrows = Array.isArray(group.arrows) ? group.arrows : ['#999'];
         const videos = Array.isArray(group.videos) ? group.videos : [];
+        const rowBaseDelay = 90 + (i * 130);
 
         let videosHTML = "";
         for (let j = 0; j < videos.length; j += 1) {
             videosHTML += `
-                <div class="masking-video-cell">
+                <div class="masking-video-cell masking-row-item" style="--masking-delay:${rowBaseDelay + 110 + (j * 50)}ms">
                     <video class="masking-video" playsinline muted preload="auto">
                         <source src="./assets/videos/masking/${videos[j]}" type="video/mp4" />
                     </video>
                 </div>`;
         }
 
-        let arrowLines = "";
-        if (arrows.length === 1) {
-            const c = arrows[0];
-            const yOff = (i - (numGroups - 1) / 2) * -18;
-            const y1 = 25 + yOff;
-            const y2 = 25;
-            arrowLines = `<line x1="2" y1="${y1}" x2="30" y2="${y2}" stroke="${c}" stroke-width="2" stroke-dasharray="5,4"/>
-                <polygon points="28,${y2 - 5} 36,${y2} 28,${y2 + 5}" fill="${c}"/>`;
-        } else {
-            for (let a = 0; a < arrows.length; a++) {
-                const c = arrows[a];
-                const yBase = 14 + a * 22;
-                const yOff = (i - (numGroups - 1) / 2) * -10;
-                const y1 = yBase + yOff;
-                const y2 = yBase;
-                arrowLines += `<line x1="2" y1="${y1}" x2="30" y2="${y2}" stroke="${c}" stroke-width="2" stroke-dasharray="5,4"/>
-                    <polygon points="28,${y2 - 4} 36,${y2} 28,${y2 + 4}" fill="${c}"/>`;
-            }
-        }
-        const arrowSVG = `<svg class="masking-arrow-svg" viewBox="0 0 40 50">${arrowLines}</svg>`;
+        const guideTopLabel = group.label_top || group.label || "";
+        const guideBottomLabel = group.label_bottom || "";
 
-        const rightArrowColor = arrows.length === 1 ? arrows[0] : arrows[0];
-        const rightArrow = `<svg class="masking-right-arrow" viewBox="0 0 16 20">
-            <polygon points="2,4 14,10 2,16" fill="${rightArrowColor}"/>
+        const rightArrowColors = arrows.length > 0 ? arrows : ["#64748b"];
+        const arrowSpacing = 16;
+        const rightArrowHeight = rightArrowColors.length === 1 ? 26 : 26 + ((rightArrowColors.length - 1) * arrowSpacing);
+        let rightArrowLines = "";
+        for (let a = 0; a < rightArrowColors.length; a += 1) {
+            const c = rightArrowColors[a];
+            const y = rightArrowColors.length === 1 ? 13 : 7 + (a * arrowSpacing);
+            rightArrowLines += `
+                <line x1="2" y1="${y}" x2="33" y2="${y}" stroke="rgba(255,255,255,0.96)" stroke-width="6.2" stroke-linecap="round"/>
+                <line x1="2" y1="${y}" x2="33" y2="${y}" stroke="${c}" stroke-width="3.2" stroke-linecap="round"/>
+                <polygon points="33,${y - 6} 47,${y} 33,${y + 6}" fill="${c}" stroke="rgba(255,255,255,0.96)" stroke-width="1.2"/>
+            `;
+        }
+        const rightArrow = `<svg class="masking-right-arrow" viewBox="0 0 50 ${rightArrowHeight}" aria-hidden="true">
+            ${rightArrowLines}
         </svg>`;
 
         rowsHTML += `
-            <div class="masking-arrow-cell">${arrowSVG}</div>
-            <div class="masking-guide-cell">
-                <div class="masking-guide-label">${group.label || ""}</div>
+            <div class="masking-guide-cell masking-row-item" style="--masking-delay:${rowBaseDelay + 35}ms">
+                <div class="masking-guide-label masking-guide-label-top">${guideTopLabel}</div>
                 <div class="masking-guide-img-wrap">
-                    <img class="masking-guide-image" src="./assets/videos/masking/${group.image}" alt="Masking guide" />
-                    <span class="masking-right-arrow-wrap">${rightArrow}</span>
+                    <div class="masking-guide-frame">
+                        <img class="masking-guide-image" src="./assets/videos/masking/${group.image}" alt="Masking guide ${group.key || ""}" />
+                    </div>
                 </div>
+                ${guideBottomLabel ? `<div class="masking-guide-label masking-guide-label-bottom">${guideBottomLabel}</div>` : ""}
             </div>
+            <div class="masking-arrow-lane masking-row-item" style="--masking-delay:${rowBaseDelay + 55}ms">${rightArrow}</div>
             ${videosHTML}`;
     }
 
@@ -1022,9 +1020,11 @@ function renderMaskingBlock(div) {
             <div class="masking-grid">
                 <div class="masking-original-cell">
                     <div class="masking-original-label">original video</div>
-                    <video class="masking-video masking-original-video" playsinline muted preload="auto">
-                        <source src="./assets/videos/masking/${maskingConfig.original}" type="video/mp4" />
-                    </video>
+                    <div class="masking-original-frame masking-row-item" style="--masking-delay:40ms">
+                        <video class="masking-video masking-original-video" playsinline muted preload="auto">
+                            <source src="./assets/videos/masking/${maskingConfig.original}" type="video/mp4" />
+                        </video>
+                    </div>
                 </div>
                 ${scaleLabelsHTML}
                 ${rowsHTML}
@@ -1854,4 +1854,3 @@ function initializeInteractiveTeaser() {
         scheduleAutoPaging();
     }
 }
-
