@@ -210,20 +210,6 @@ category_examples = {
 By combining sliders, users can achieve smooth, predictable joint transformations while maintaining disentanglement between attributes.<br><br>
 Here, color (horizontal) and dilution (vertical) are controlled independently, illustrating that multiple attributes can be composed without mutual interference.`,
     },
-    'threed-control': {
-        'scenes': ['toy-dinosaurs', 'woman-yoga', 'cake'],
-        'methods': [''], // disabled
-        'modes': [''],  // disabled
-        'labels': {
-            'toy-dinosaurs':    ['Input', 'Left dinosaur in front', 'Right dinosaur in front'],
-            'cake':             ['Input', 'Rotate clockwise', 'Rotate counter-clockwise'],
-            'woman-yoga':       ['Input', 'Rotate clockwise', 'Rotate counter-clockwise'],
-        },
-        'columns': 3,
-        'is_demo': true,
-        'current_scene': null,
-        'description': `Our method leverages 3D point tracks for precise 3D object motion control, accurately handling <a onclick="selectSceneByName('threed-control', 'toy-dinosaurs')">object depth order (tracks visualized with depth values)</a> and occlusions/disocclusions during <a onclick="selectSceneByName('threed-control', 'woman-yoga')">3D rotations</a>.`,
-    },
     'failures': {
         'scenes': ['pour-coffee', 'jump-boat'],
         'methods': [''], // disabled
@@ -243,180 +229,51 @@ Here, color (horizontal) and dilution (vertical) are controlled independently, i
         `,
     },
     'comparisons': {
-        'scenes': ['car-turn', 'sea-turtle', 'three-skaters', 'man-jump-water', 'seal', 'cake'],
-        'methods': ['ATI', 'DaS', 'PaC', 'ReVideo', 'TrajAttn', 'GEN3C', 'TrajCrafter', 'ReCamMaster'],
-        'modes': [''],
-        'labels': {
-            'three-skaters':    ['Input video warped by target motion <br> Camera: move right; Object: adjust skateboarders\' paths'],
-            'seal':             ['Input video warped by target motion <br> Camera: arc left; Object: unchanged'],
-            'car-turn':         ['Input video warped by target motion <br> Camera: unchanged; Object: rotate the car to make it drift'],
-            'cake':             ['Input video warped by target motion <br> Camera: static; Object: rotate the cake'],
-            'sea-turtle':       ['Input video warped by target motion <br> Camera: static; Object: unchanged'],
-            'man-jump-water':   ['Input video warped by target motion <br> Camera: move left; Object: adjust falling location'],
-            'mochi':            ['Ground-truth'],
-            'backpack':         ['Ground-truth'],
-        },
+        'methods': ['freeslider', 'textslider', 'conceptslider', 'sliderspace', 'senorita', 'univideo'],
         'method_labels': {
-            'DaS':              'Diffusion as Shader<br>(track-conditioned I2V)',
-            'ATI':              'ATI<br>(track-conditioned I2V)',
-            'PaC':              'Perception as Control<br>(track-conditioned I2V)',
-            'ReVideo':          'ReVideo<br>(track-conditioned IV2V)',
-            'GEN3C':            'GEN3C<br>(Camera-controlled inpainting-based V2V)',
-            'TrajCrafter':      'Trajectory Crafter<br>(Camera-controlled inpainting-based V2V)',
-            'TrajAttn':         'Trajectory Attention<br>(track-conditioned I2V with an NVS-Solver extension)',
-            'ReCamMaster':      'ReCamMaster<br>(Camera-controlled V2V)',
+            'conceptslider': 'ConceptSlider',
+            'freeslider':    'FreeSlider',
+            'senorita':      'Kontinuous Kontext + Señorita',
+            'sliderspace':   'SliderSpace',
+            'textslider':    'Text Slider',
+            'univideo':      'UniVideo',
         },
-        'enable_methods': {
-            'three-skaters':    ['ATI', 'DaS', 'PaC', 'GEN3C', 'TrajCrafter', 'TrajAttn', 'ReVideo'],
-            'car-turn':         ['ATI', 'DaS', 'PaC', 'GEN3C', 'TrajCrafter', 'TrajAttn', 'ReVideo'],
-            'cake':             ['ATI', 'DaS', 'PaC', 'GEN3C', 'TrajCrafter', 'TrajAttn', 'ReVideo'],
-            'sea-turtle':       ['ATI', 'DaS', 'PaC', 'GEN3C', 'TrajCrafter', 'TrajAttn', 'ReVideo', 'ReCamMaster'],
-            'seal':             ['ATI', 'DaS', 'PaC', 'GEN3C', 'TrajCrafter', 'TrajAttn', 'ReVideo', 'ReCamMaster'],
-            'man-jump-water':   ['ATI', 'DaS', 'PaC', 'GEN3C', 'TrajCrafter', 'TrajAttn', 'ReVideo'],
-        },
-        'is_demo': false,
-        'is_comparison': true,
-        'current_scene': null,
-        'current_method': null,
-        'description': `
-            Existing methods have limitations in jointly editing camera and object motions while preserving scene context:
-            <ul>
-                <li> <b>Track-conditioned image-to-video (I2V)</b> methods (<a href="#ref-das">DaS</a>, <a href="#ref-ati">ATI</a>, <a href="#ref-pac">PaC</a>) generate videos from a single frame,
-                    while <a href="#ref-revideo">ReVideo</a> and the extended <a href="#ref-trajattn">TrajAttn</a> additionally takes a masked video input (cropped background or warped frames), these methods  <a onclick="selectSceneByName('comparisons', 'car-turn', 'ATI')">lose the full scene context</a> of the input video.</li>
-                </li>
-                <li> <b>Camera-controlled video-to-video (V2V)</b> approaches (<a href="#ref-gen3c">GEN3C</a>, <a href="#ref-trajcrafter">TrajCrafter</a>) inpaint from the warped input video but fails to <a onclick="selectSceneByName('comparisons', 'car-turn', 'GEN3C')">shadows</a> or <a onclick="selectSceneByName('comparisons', 'man-jump-water', 'TrajCrafter')">water splashes</a> of the edited objects.
-                    <a href="#ref-recamaster">ReCamMaster</a> directly inputs the target camera extrinsics (see camera-only editing cases, <a onclick="selectSceneByName('comparisons', 'sea-turtle', 'ReCamMaster')">sea turtle</a> and <a onclick="selectSceneByName('comparisons', 'seal', 'ReCamMaster')">seal</a>).
-                    We observed that ReCamMaster fails in specific fixed-viewpoint cases (e.g., <a onclick="selectSceneByName('comparisons', 'sea-turtle', 'ReCamMaster')">sea turtle</a>), likely because such scenarios were not adequately represented in its training data.
-                </li>
-            </ul>
-            In contrast, our method conditions on the entire unmasked input video and the pair of input and target 3D tracks for joint camera and object motion editing with the consistency of the original scene context.
-        `,
-    },
-    'traindata': {
-        'scenes': ['syn-exp1', 'syn-exp2', 'real-exp1', 'real-exp2'],
-        'methods': ['synthetic', 'real'],
-        'modes': [''],
-        'labels': {
-            'syn-exp1':     ['Training input', 'Ground-truth'],
-            'syn-exp2':     ['Training input', 'Ground-truth'],
-            'real-exp1':    ['Training input', 'Target output'],
-            'real-exp2':    ['Training input', 'Target output'],
-        },
-        'enable_scenes': {
-            'synthetic':    ['syn-exp1', 'syn-exp2'],
-            'real':         ['real-exp1', 'real-exp2'],
-        },
-        'method_buttons': {
-            'synthetic': 'Stage 1: Synthetic Data',
-            'real': 'Stage 2: Real Data',
-        },
-        'columns': 2,
-        'is_demo': true,
-        'current_scene': null,
-        'description': `To train our track-conditioned V2V model, a major challenge lies in the scarcity of ideal, annotated video pairs for motion manipulation.
-                        To tackle this, we adopt a two-stage fine-tuning approach. Click the buttons below to see the training data used in each stage.`,
-        'method_descriptions': {
-            'synthetic': `Our model is first fine-tuned on the synthetic data with ground-truth point tracks to learn motion control. Each video pair shares the same objects and background scenes but differs in object actions and camera motions.`,
-            'real': `We continue fine-tuning on real data by sampling two non-contiguous clips from a monocular video (as illustrated), leveraging its natural motion to scalably simulate joint camera and object motion changes. Please note: The examples shown are from publicly available videos, not our internal training data.
-                    <br><span class="description-real-data-illustration"><img src="./assets/images/traindata-real.svg"></span>`,
-        }
-    },
-    'model-analysis': {
-        'methods': ['2dvs3d', 'tokenvis', 'sparsity', 'noisiness', 'text-prompt', 'seeds'],
-        'scenes': ['ride-horse', 'woman-yellow-wall', 'three-skaters', 'sea-turtle', 'taichi', 'toy-dinosaurs', 'wallaby', 'dog-beach', 'woman-yoga'],
-        'method_buttons': {
-            'sparsity': 'Sparsity of tracks',
-            'noisiness': 'Noisiness of tracks',
-            '2dvs3d': '2D vs 3D tracks',
-            'tokenvis': 'Track token visualization',
-            'text-prompt': 'Effect of texts',
-            'seeds': 'Random seeds',
-        },
-        'modes': [
-            'N=32', 'N=256', 'STD=4', 'STD=16',
+        'scenes': [
+            { key: 'campfire_redder', type: 'appearance', prompt: 'Make the campfire redder' },
+            { key: 'happy',           type: 'appearance', prompt: 'Make the person happier' },
+            { key: 'older',           type: 'appearance', prompt: 'Make the person older' },
+            { key: 'snowflake',       type: 'appearance', prompt: 'Make the snowflakes larger' },
+            { key: 'couple_run',      type: 'motion',     prompt: 'Make the couple running' },
+            { key: 'dance',           type: 'motion',     prompt: 'Motion slider: dance' },
+            { key: 'smoke',           type: 'motion',     prompt: 'Make the smoke move faster' },
+            { key: 'writer',          type: 'motion',     prompt: 'Motion slider: writer' },
         ],
-        'enable_scenes': {
-            'sparsity':     ['ride-horse', 'woman-yellow-wall'],
-            'noisiness':    ['three-skaters', 'sea-turtle'],
-            '2dvs3d':       ['taichi', 'toy-dinosaurs'],
-            'tokenvis':     ['toy-dinosaurs'],
-            'text-prompt':  ['wallaby', 'dog-beach'],
-            'seeds':        ['woman-yoga'],
-        },
-        'enable_modes': {
-            'sparsity':     [],
-            'noisiness':    [],
-            '2dvs3d':       [],
-            'tokenvis':     [],
-            'text-prompt':  [],
-            'seeds':        [],
-        },
-        'method_columns': {
-            'sparsity':     [['Input', 'N=1024', 'N=256', 'N=32']],
-            'noisiness':    [['Input', 'STD=0', 'STD=4', 'STD=16']],
-            '2dvs3d':       [['ref', '3D', '2D']],
-            'text-prompt':  [['Input', 'prompt1', 'prompt2']],
-            'seeds':        [['Input', 'seed0', 'seed1', 'seed2']],
-            'tokenvis':     [['Input', 'left', 'right']],
-        },
-        'column_labels': {
-            '2dvs3d': {
-                'taichi': {'ref': 'Target motion', '3D': 'Model with 3D tracks (Ours)', '2D': 'Model with 2D tracks'},
-                'toy-dinosaurs': {'ref': 'Target motion warped<br>(left dinosaur in front)', '3D': 'Model with 3D tracks (Ours)', '2D': 'Model with 2D tracks'},
+        'default_files': ['video1.mp4', 'video2.mp4', 'video3.mp4', 'video4.mp4', 'video5.mp4'],
+        'video_data': {
+            'campfire_redder': {
+                'ours':           ['0.mp4', 'our_1.mp4', 'our_2.mp4', 'our_3.mp4', 'our_4.mp4'],
+                'conceptslider':  ['0.mp4', 'conceptslider_1.mp4', 'conceptslider_2.mp4', 'conceptslider_3.mp4', 'conceptslider_4.mp4'],
+                'freeslider':     ['0.mp4', 'freeslider_1.mp4', 'freeslider_2.mp4', 'freeslider_3.mp4', 'freeslider_4.mp4'],
+                'senorita':       ['0.mp4', 'senorita_1_web.mp4', 'senorita_2_web.mp4', 'senorita_3_web.mp4', 'senorita_4_web.mp4'],
+                'sliderspace':    ['0.mp4', 'sliderspace_1.mp4', 'sliderspace_2.mp4', 'sliderspace_3.mp4', 'sliderspace_4.mp4'],
+                'textslider':     ['0.mp4', 'textslider_1.mp4', 'textslider_2.mp4', 'textslider_3.mp4', 'textslider_4.mp4'],
+                'univideo':       ['0.mp4', 'slightly.mp4', 'moderately.mp4', 'much.mp4', 'extremely_very.mp4'],
             },
-            'text-prompt': {
-                'dog-beach': {'Input': 'Input', 'prompt1': '\"a dog jumps on a beach, causing water splashes.\"', 'prompt2': '\"A dog jumps on a sticky honey without splashes\"'},
-                'wallaby': {'Input': 'Input', 'prompt1': '\"A wallaby in a zoo\"', 'prompt2': '\"A wallaby on a beach\"'},
+            'couple_run': {
+                'ours':           ['0.mp4', 'our_1.mp4', 'our_2.mp4', 'our_3.mp4', 'our_4.mp4'],
+                'conceptslider':  ['0.mp4', 'conceptslider_1.mp4', 'conceptslider_2.mp4', 'conceptslider_3.mp4', 'conceptslider_4.mp4'],
+                'freeslider':     ['0.mp4', 'freeslider_1.mp4', 'freeslider_2.mp4', 'freeslider_3.mp4', 'freeslider_4.mp4'],
+                'senorita':       ['0.mp4', 'senorita_1_web.mp4', 'senorita_2_web.mp4', 'senorita_3_web.mp4', 'senorita_4_web.mp4'],
+                'sliderspace':    ['0.mp4', 'sliderspace_1.mp4', 'sliderspace_2.mp4', 'sliderspace_3.mp4', 'sliderspace_4.mp4'],
+                'textslider':     ['0.mp4', 'textslider_1.mp4', 'textslider_2.mp4', 'textslider_3.mp4', 'textslider_4.mp4'],
+                'univideo':       ['0.mp4', 'univideo_1.mp4', 'univideo_2.mp4', 'univideo_3.mp4', 'univideo_4.mp4'],
             },
-            'seeds': {
-                'woman-yoga': {'Input': 'Input', 'seed0': 'Seed 0', 'seed1': 'Seed 1', 'seed2': 'Seed 2'}
-            },
-            'tokenvis': {
-                'toy-dinosaurs': {'Input': 'Input', 'left': 'Left dinosaur in front', 'right': 'Right dinosaur in front'}
-            }
         },
-        'method_descriptions': {
-            '2dvs3d': `
-                        We compare our final model using 3D tracks with an ablated version trained only with 2D tracks.
-                        <br><br>
-                        The 3D track inputs provide crucial depth cues, enabling the model to correctly handle <a onclick="selectSceneByName('model-analysis', 'taichi', '2dvs3d')">complex 3D rotations during human motion transfer</a>
-                        and <a onclick="selectSceneByName('model-analysis', 'toy-dinosaurs', '2dvs3d')">depth ordering (tracks visualized with depth values)</a>.
-                        <br><br>
-                        Top row: video; bottom row: Track overlay.
-                    `,
-            'tokenvis': `
-                        We visualize the paired track tokens from our 3D track conditioner using PCA.
-                        <br><br>
-                        The 3rd row shows the tokens <i>before</i> adding the z-embedding, which primarily capture rich visual context sampled from the input video.
-                        <br><br>
-                        The 4th row shows the final tokens <i>after</i> adding the z-embedding. These now contain additional depth cues (e.g., in the visualization, darker colors represent closer objects). 
-                    `,
-            'sparsity': `
-                        Our model is trained on a random number of point tracks between [500, 1000], and we test its robustness to sparser inputs not seen during training.
-                        <br><br>
-                        While extremely sparse inputs (N=32) can cause motion artifacts and undesired generation due to insufficient correspondences,
-                        a denser sparse input (N=256)—though still sparser than the training range—significantly enhances motion control and visual quality.
-                    `,
-            'noisiness': `
-                        To account for potential noise and inaccuracies in estimated 3D tracks and camera poses, we test our model's robustness to perturbed inputs.
-                        This experiment involves adding varying amounts of Gaussian noise to the target point tracks.
-                        <br><br>
-                        Our model maintains satisfactory motion control and visual quality with mild noise (STD=4px),
-                        but excessive noise (STD=16px) leads to noticeable artifacts and diminished control accuracy.
-                    `,
-            'text-prompt': `
-                        While our model primarily relies on 3D track conditions for precise motion control,
-                        text prompts can provide supplementary context.
-                        This is particularly useful for generating <a onclick="selectSceneByName('model-analysis', 'wallaby', 'text-prompt')">unseen regions</a> or adding fine-grained details (e.g., <a onclick="selectSceneByName('model-analysis', 'dog-beach', 'text-prompt')">water effects</a>).
-                    `,
-            'seeds': `
-                        Using different random seeds leads to slight variations in the output.
-                        Please note that all above results shown on this webpage are generated using the same seed (=0).
-            `,
-        },
-        'is_demo': false,
-        'is_comparison': false,
-    }
+        'description': `We compare our continuous video editing approach against existing slider-based methods across both appearance and motion editing tasks.
+            For each scene, our method (top row) is shown alongside the selected baseline (bottom row), with videos ordered from weakest to strongest edit strength.`,
+        'current_method': null,
+        'current_scene': null,
+    },
 }
 
 const teaserInteractiveConfig = [
@@ -540,11 +397,8 @@ $(document).ready(function () {
         'motion-slider',
         'compose-sliders',
         'masking',
-        'threed-control',
         'failures',
-        'traindata',
         'comparisons',
-        'model-analysis',
     ];
     for (let i = 0; i < category_names.length; i++) {
         category_name = category_names[i];
@@ -585,7 +439,7 @@ function getSectionTopBottom(section_id) {
 
 float_navbars = {
     'navbar-apps': ["sec:appearance-slider", "sec:motion-slider", "sec:compose-sliders", "sec:masking"],
-    'navbar-method': ["sec:comparison", "sec:framework", "sec:traindata", "sec:threed-control", "sec:model-analysis", "sec:failures"],
+    'navbar-method': ["sec:comparison", "sec:framework", "sec:failures"],
 }
 
 
@@ -652,6 +506,11 @@ function display_block(category_name) {
 
     if (category_name === 'masking') {
         renderMaskingBlock(div);
+        return;
+    }
+
+    if (category_name === 'comparisons') {
+        renderComparisonsBlock(div);
         return;
     }
 
@@ -1046,6 +905,170 @@ function renderMaskingBlock(div) {
     `;
 
     initializeSyncedVideoGrid(div, ".masking-video", "_maskingSyncTimer");
+}
+
+
+function renderComparisonsBlock(div) {
+    var config = category_examples['comparisons'];
+    var methods = config.methods;
+    var methodLabels = config.method_labels;
+    var scenes = config.scenes;
+
+    var descHTML = '';
+    if (config.description) {
+        descHTML = '<div class="has-text-centered description" id="comparisons-description">' +
+            '<span>' + config.description + '</span></div>';
+    }
+
+    var methodPillsHTML = '<div class="text-center" id="comparisons-method-pills">' +
+        '<div class="btn-group btn-group-sm">';
+    for (var i = 0; i < methods.length; i++) {
+        var m = methods[i];
+        var activeClass = (i === 0) ? 'active' : '';
+        methodPillsHTML += '<span class="button is-normal comparisons-method-pill ' + activeClass +
+            '" data-value="' + m + '" id="comparisons-method-' + m +
+            '" onclick="selectComparisonMethod(\'' + m + '\')">' +
+            methodLabels[m] + '</span>';
+    }
+    methodPillsHTML += '</div></div>';
+
+    var appearanceScenes = scenes.filter(function (s) { return s.type === 'appearance'; });
+    var motionScenes = scenes.filter(function (s) { return s.type === 'motion'; });
+
+    var scenePillsHTML = '<div class="has-text-centered text-center">' +
+        '<div class="comparisons-scene-row">';
+
+    scenePillsHTML += '<div class="comparisons-scene-group">' +
+        '<div class="comparisons-scene-group-label">Appearance</div>' +
+        '<div class="pill-row scene-pills">';
+    for (var a = 0; a < appearanceScenes.length; a++) {
+        var as = appearanceScenes[a];
+        var aActive = (a === 0) ? 'active' : '';
+        scenePillsHTML += '<span id="comparisons-scene-' + as.key +
+            '" class="pill comparisons-scene-pill ' + aActive +
+            '" data-value="' + as.key +
+            '" onclick="selectComparisonScene(\'' + as.key + '\')">' +
+            '<img class="thumbnail-img" src="assets/thumbnails/comparisons-appearance-' + as.key + '.jpg" width="64">' +
+            '</span>';
+    }
+    scenePillsHTML += '</div></div>';
+
+    scenePillsHTML += '<div class="comparisons-scene-group">' +
+        '<div class="comparisons-scene-group-label">Motion</div>' +
+        '<div class="pill-row scene-pills">';
+    for (var b = 0; b < motionScenes.length; b++) {
+        var ms = motionScenes[b];
+        var mActive = '';
+        scenePillsHTML += '<span id="comparisons-scene-' + ms.key +
+            '" class="pill comparisons-scene-pill ' + mActive +
+            '" data-value="' + ms.key +
+            '" onclick="selectComparisonScene(\'' + ms.key + '\')">' +
+            '<img class="thumbnail-img" src="assets/thumbnails/comparisons-motion-' + ms.key + '.jpg" width="64">' +
+            '</span>';
+    }
+    scenePillsHTML += '</div></div>';
+    scenePillsHTML += '</div></div>';
+
+    var videoHTML = '<div id="comparisons-video-container"></div>';
+
+    var instruction = '';
+    if (!is_mobile) {
+        instruction = '<div class="has-text-centered demo-video-instruction"><br>' +
+            '<div class="instruction-centered"><p>' +
+            '<span class="icon"><i class="far fa-hand-point-up"></i></span>Click video to pause' +
+            '&nbsp;&nbsp;&nbsp;' +
+            '<a href="#top"><span class="icon"><i class="fas fa-chevron-up"></i></span>Back to top</a>' +
+            '</p></div></div>';
+    } else {
+        instruction = '<div class="has-text-centered demo-video-instruction">' +
+            '<div class="instruction-centered"><p>' +
+            '<span class="icon"><i class="far fa-hand-point-up"></i></span>Touch video to pause' +
+            '</p></div></div>';
+    }
+
+    div.innerHTML = descHTML + methodPillsHTML + scenePillsHTML + videoHTML + instruction;
+
+    config.current_method = methods[0];
+    config.current_scene = scenes[0].key;
+    loadComparisonVideos();
+}
+
+
+function getComparisonSceneObj(sceneKey) {
+    var scenes = category_examples['comparisons'].scenes;
+    for (var i = 0; i < scenes.length; i++) {
+        if (scenes[i].key === sceneKey) return scenes[i];
+    }
+    return null;
+}
+
+
+function loadComparisonVideos() {
+    var config = category_examples['comparisons'];
+    var sceneKey = config.current_scene;
+    var sceneObj = getComparisonSceneObj(sceneKey);
+    if (!sceneObj) return;
+
+    var method = config.current_method;
+    var videoData = config.video_data[sceneKey] || {};
+    var defaultFiles = config.default_files;
+    var container = document.getElementById('comparisons-video-container');
+    var basePath = './assets/videos/comparisons/' + sceneObj.type + '/' + sceneKey;
+    var baselineLabel = config.method_labels[method];
+
+    var oursFiles = videoData['ours'] || defaultFiles;
+    var methodFiles = videoData[method] || defaultFiles;
+
+    var html = '<div class="comparisons-row-label">Ours (TokenDial)</div>';
+    html += '<div class="appearance-video-row">';
+    for (var i = 0; i < oursFiles.length; i++) {
+        html += '<div class="appearance-video-item">' +
+            '<video class="comparison-video appearance-video comparisons-synced-video" loop playsinline muted preload="auto">' +
+            '<source src="' + basePath + '/ours/' + oursFiles[i] + '" />' +
+            '</video></div>';
+    }
+    html += '</div>';
+
+    html += '<div class="comparisons-row-label">' + baselineLabel + '</div>';
+    html += '<div class="appearance-video-row">';
+    for (var j = 0; j < methodFiles.length; j++) {
+        html += '<div class="appearance-video-item">' +
+            '<video class="comparison-video appearance-video comparisons-synced-video" loop playsinline muted preload="auto">' +
+            '<source src="' + basePath + '/' + method + '/' + methodFiles[j] + '" />' +
+            '</video></div>';
+    }
+    html += '</div>';
+
+    if (sceneObj.prompt) {
+        html += '<div class="appearance-prompt">' + sceneObj.prompt + '</div>';
+    }
+
+    container.innerHTML = html;
+    initializeSyncedVideoGrid(container, ".comparisons-synced-video", '_comparisonsSyncTimer');
+}
+
+
+function selectComparisonMethod(method) {
+    var config = category_examples['comparisons'];
+    var pills = document.querySelectorAll('.comparisons-method-pill');
+    for (var i = 0; i < pills.length; i++) {
+        pills[i].classList.remove('active');
+    }
+    document.getElementById('comparisons-method-' + method).classList.add('active');
+    config.current_method = method;
+    loadComparisonVideos();
+}
+
+
+function selectComparisonScene(sceneKey) {
+    var config = category_examples['comparisons'];
+    var pills = document.querySelectorAll('.comparisons-scene-pill');
+    for (var i = 0; i < pills.length; i++) {
+        pills[i].classList.remove('active');
+    }
+    document.getElementById('comparisons-scene-' + sceneKey).classList.add('active');
+    config.current_scene = sceneKey;
+    loadComparisonVideos();
 }
 
 
