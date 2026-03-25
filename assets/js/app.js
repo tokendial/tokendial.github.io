@@ -198,7 +198,7 @@ category_examples = {
                 'videos': ['compose_1.mp4', 'compose_2.mp4', 'compose_3.mp4'],
             },
         ],
-        'description': `The original video is shown on the left, while masked track edits are visualized in the center. Each row demonstrates progressively stronger edits from left to right.`,
+        'description': `Region masking enables localized edits to selected objects or regions while preserving the rest of the scene. The original video is shown on the left, and each row on the right shows progressively stronger masked edits from left to right.`,
     },
     'compose-sliders': {
         'folder': 'compose-ink',
@@ -211,22 +211,15 @@ By combining sliders, users can achieve smooth, predictable joint transformation
 Here, color (horizontal) and dilution (vertical) are controlled independently, illustrating that multiple attributes can be composed without mutual interference.`,
     },
     'failures': {
-        'scenes': ['pour-coffee', 'jump-boat'],
-        'methods': [''], // disabled
-        'modes': [''],  // disabled
-        'labels': {
-            'beer':         ['Input', 'Output', 'Warped reference'],
-            'pour-coffee':  ['Input', 'Output', 'Warped reference'],
-            'volleyball':   ['Input', 'Output', 'Warped reference'],
-            'mopping':      ['Input', 'Output', 'Warped reference'],
-        },
-        'columns': 3,
         'is_demo': true,
         'current_scene': null,
-        'description': `Our approach still has a few limitations:
-        (i) complex, motion-dependent physical effects (e.g., liquid dynamics like <a onclick="selectSceneByName('failures', 'pour-coffee')">coffee and milk mixing</a>) are not synthesized correctly,
-        and (ii) small objects with large motion changes (e.g., <a onclick="selectSceneByName('failures', 'jump-boat')">a 270&deg front-flip</a>) can suffer distortions when their tracks are densely clustered and noisy.
-        `,
+        'description': `Our method relies on pretrained video understanding models (e.g., InternVideo2) to define semantic directions for appearance control, but the resulting semantic space can remain entangled and inherit biases that are difficult to fully separate.<br><br>Here, the intended “make the person older” direction is entangled with body weight, so increasing the slider may inadvertently change both attributes. Although semantic debiasing via subspace projection can reduce this coupling, it may still fail to isolate aging alone without affecting related appearance properties.`,
+        'prompt': 'Make the person older.',
+        'videos': [
+            { 'label': '<br>Original video', 'file': '1.mp4' },
+            { 'label': 'Biased edit <br> (Entangled aging and body weight)', 'file': '2.mp4' },
+            { 'label': '<br>Debiased edit', 'file': '3.mp4' },
+        ],
     },
     'comparisons': {
         'methods': ['freeslider', 'textslider', 'conceptslider', 'sliderspace', 'senorita', 'univideo'],
@@ -269,8 +262,15 @@ Here, color (horizontal) and dilution (vertical) are controlled independently, i
                 'univideo':       ['0.mp4', 'univideo_1.mp4', 'univideo_2.mp4', 'univideo_3.mp4', 'univideo_4.mp4'],
             },
         },
-        'description': `We compare our continuous video editing approach against existing slider-based methods across both appearance and motion editing tasks.
-            For each scene, our method (top row) is shown alongside the selected baseline (bottom row), with videos ordered from weakest to strongest edit strength.`,
+        'description': `We compare TokenDial against a diverse set of baselines spanning slider-based and video editing methods.
+  <br>
+  <b>Video sliders</b>: <a href="https://azencot-group.github.io/FreeSliders/">FreeSlider</a>, <a href="https://textslider.github.io/">Text Slider</a>, and two image-based slider methods adapted to text-to-video generation, <a href="https://sliders.baulab.info/">ConceptSlider</a> and <a href="https://sliderspace.baulab.info/">SliderSpace</a>.
+  <br>
+  <b>Slider-based image editing with first-frame propagation</b>: <a href="https://snap-research.github.io/kontinuouskontext/">Kontinuous Kontext</a> combined with <a href="https://senorita-2m-dataset.github.io/">Senorita</a>, which applies image-level slider edits to the first frame and propagates them through the video.
+  <br>
+  <b>Video-to-video editing</b>:  <a href="https://congwei1230.github.io/UniVideo/">UniVideo</a>, a text-guided V2V baseline that edits each strength level independently through prompting.
+  <br><br>
+  These baselines cover reusable slider control, image-to-video propagation, and text-based video editing, providing a broad comparison across methods with different control mechanisms and editing assumptions.`,
         'current_method': null,
         'current_scene': null,
     },
@@ -392,7 +392,7 @@ const teaserInteractiveConfig = [
 
 
 $(document).ready(function () {
-    category_names = [
+    const categoryNames = [
         'appearance-slider',
         'motion-slider',
         'compose-sliders',
@@ -400,15 +400,15 @@ $(document).ready(function () {
         'failures',
         'comparisons',
     ];
-    for (let i = 0; i < category_names.length; i++) {
-        category_name = category_names[i];
+    for (let i = 0; i < categoryNames.length; i++) {
+        const categoryName = categoryNames[i];
 
         // initialize global-variable active pills
-        activeMethodsPill[category_name] = null;
-        activeScenesPill[category_name] = null;
-        activeModesPill[category_name] = null;
+        activeMethodsPill[categoryName] = null;
+        activeScenesPill[categoryName] = null;
+        activeModesPill[categoryName] = null;
 
-        display_block(category_name);
+        display_block(categoryName);
     }
     var width = (window.innerWidth > 0) ? window.innerWidth : screen.width;
     is_mobile = (width <= 768);
@@ -417,82 +417,9 @@ $(document).ready(function () {
 
 
 function onResizeWindow() {
-    for (let category_name in category_examples) {
-        if (!category_examples[category_name]['is_demo']) {
-            video_container = $("#" + category_name + "-video-container");
-            if (video_container) {
-                video_container.syncer({reset_height: true});
-            }
-        }
-    }
     var width = (window.innerWidth > 0) ? window.innerWidth : screen.width;
     is_mobile = (width <= 768);
 }
-
-
-function getSectionTopBottom(section_id) {
-    var section = document.getElementById(section_id);
-    var rect = section.getBoundingClientRect();
-    return {'top': rect.top, 'bottom': rect.bottom};
-}
-
-
-float_navbars = {
-    'navbar-apps': ["sec:appearance-slider", "sec:motion-slider", "sec:compose-sliders", "sec:masking"],
-    'navbar-method': ["sec:comparison", "sec:framework", "sec:failures"],
-}
-
-
-function updateNavbarsOnScroll() {
-    window_height = window.innerHeight;
-
-    for (let navbar_id in float_navbars) {
-        let section_ids = float_navbars[navbar_id];
-        let navbar = document.getElementById(navbar_id);
-        
-        var set_navbar = true;
-        main_displaying = null;
-        for (let i = 0; i < section_ids.length; i++) {
-            section_top_bottom = getSectionTopBottom(section_ids[i]);
-            section_top = section_top_bottom['top'];
-            section_bottom = section_top_bottom['bottom'];
-
-            if (i == 0 && section_top > window_height * 0.05) {
-                set_navbar = false;
-            }
-            if (i == section_ids.length - 1 && section_bottom < window_height / 2) {
-                set_navbar = false;
-            }
-            if (section_top < window_height / 2) {
-                main_displaying = section_ids[i];
-            }
-        }
-
-        if (set_navbar) {
-            parent = navbar.parentElement;
-            parent_height = parent.getBoundingClientRect().height;
-            parent.style.height = parent_height ? parent_height + "px" : "0px";
-            navbar.classList.add('navbar-active');
-        } else {
-            navbar.classList.remove('navbar-active');
-        }
-
-        for (let i = 0; i < section_ids.length; i++) {
-            btn = document.getElementById(section_ids[i].replace("sec:", "navbar-"));
-            btn.classList.remove('active');
-        }
-        if (main_displaying) {
-            main_btn = document.getElementById(main_displaying.replace("sec:", "navbar-"));
-            main_btn.classList.add('active');
-        }
-    }
-}
-
-
-// $(window).scroll(function(){
-//     updateNavbarsOnScroll();
-// });
-
 
 function display_block(category_name) {
     var width = (window.innerWidth > 0) ? window.innerWidth : screen.width;
@@ -514,16 +441,16 @@ function display_block(category_name) {
         return;
     }
 
+    if (category_name === 'failures') {
+        renderLimitationsBlock(div);
+        return;
+    }
+
     /******************************************************************************************************************/
 
     head = `
         <div class="col-2"></div>
         <div class="col-md-8">
-        <script>
-            activeMethodsPill['${category_name}'] = document.querySelector('.${category_name}-method-pill.active');
-            activeScenesPill['${category_name}'] = document.querySelector('.${category_name}-scene-pill.active');
-            activeModesPill['${category_name}'] = document.querySelector('.${category_name}-mode-pill.active');
-        </script>
         `;
 
     /******************************************************************************************************************/
@@ -731,11 +658,7 @@ function display_block(category_name) {
     activeModesPill[category_name] = document.querySelector('.' + category_name + '-mode-pill.active');
 
     // load default video
-    if (category_examples[category_name]['is_demo']) {
-        selectVideo(category_name, activeMethodsPill[category_name], activeScenesPill[category_name], activeModesPill[category_name]);
-    } else {
-        selectVideo(category_name, activeMethodsPill[category_name], activeScenesPill[category_name], activeModesPill[category_name]);
-    }
+    selectVideo(category_name, activeMethodsPill[category_name], activeScenesPill[category_name], activeModesPill[category_name]);
 
 }
 
@@ -1048,6 +971,65 @@ function loadComparisonVideos() {
 }
 
 
+function renderLimitationsBlock(div) {
+    const config = category_examples['failures'];
+    const videos = Array.isArray(config.videos) ? config.videos : [];
+    const description = config.description ? `
+        <div class="has-text-centered description limitations-description" id="failures-description">
+            <span>${config.description}</span>
+        </div>
+    ` : "";
+    const prompt = config.prompt ? `
+        <div class="appearance-prompt limitations-prompt">${config.prompt}</div>
+    ` : "";
+
+    let videoHTML = '<div class="limitations-video-row" id="failures-video-container">';
+    for (let i = 0; i < videos.length; i++) {
+        const item = videos[i];
+        videoHTML += `
+            <div class="limitations-video-item">
+                <div class="limitations-video-label">${item.label}</div>
+                <video class="comparison-video limitations-video failures-synced-video" loop playsinline muted preload="auto">
+                    <source src="./assets/videos/limitations/${item.file}" />
+                </video>
+            </div>
+        `;
+    }
+    videoHTML += '</div>';
+
+    let instruction = '';
+    if (!is_mobile) {
+        instruction = `
+            <div class="has-text-centered demo-video-instruction">
+                <div class="instruction-centered">
+                    <p>
+                        <span class="icon"><i class="far fa-hand-point-up"></i></span>Click video to pause
+                        &nbsp;&nbsp;&nbsp;
+                        <a href="#top"><span class="icon"><i class="fas fa-chevron-up"></i></span>Back to top</a>
+                    </p>
+                </div>
+            </div>
+        `;
+    } else {
+        instruction = `
+            <div class="has-text-centered demo-video-instruction">
+                <div class="instruction-centered">
+                    <p>
+                        <span class="icon"><i class="far fa-hand-point-up"></i></span>Touch video to pause
+                    </p>
+                </div>
+            </div>
+        `;
+    }
+
+    div.innerHTML = description + videoHTML + prompt + instruction;
+    const container = document.getElementById('failures-video-container');
+    if (container) {
+        initializeSyncedVideoGrid(container, ".failures-synced-video", '_limitationsSyncTimer');
+    }
+}
+
+
 function selectComparisonMethod(method) {
     var config = category_examples['comparisons'];
     var pills = document.querySelectorAll('.comparisons-method-pill');
@@ -1188,87 +1170,6 @@ function initializeSyncedVideoGrid(div, selector, timerKey) {
 }
 
 
-function loadDemoVideoContainer(video_container, category_name, scene, method, mode) {
-    filename = scene;
-    if (method && method != '') {
-        filename = `${method}/${filename}`;
-    }
-    if (mode && mode != '') {
-        filename = `${filename}-${mode}`;
-    }
-
-    current_filename = category_examples[category_name]['current_scene'];
-    if (current_filename == null) {
-        video_container.innerHTML = `
-            <div class="twentytwenty-container" id="${category_name}-video-twentytwenty">
-                <div class="video">
-                    <video class="video demo-video" style="width: 100%;" id="${category_name}Video0" loop playsinline autoplay muted>
-                        <source src="./assets/videos/${category_name}/${filename}.mp4" />
-                    </video>
-                </div>
-                <div class="video">
-                    <video class="video demo-video" style="width: 100%;" id="${category_name}Video1" loop playsinline autoplay muted>
-                        <source src="./assets/videos/${category_name}/${filename}-tracks.mp4" />
-                    </video>
-                </div>
-            </div>
-        `;
-    } else if (current_filename != filename) {
-        video_container.innerHTML = video_container.innerHTML.replaceAll(current_filename, filename);
-    }
-    category_examples[category_name]['current_scene'] = filename;
-    var video_active0 = document.getElementById(category_name + "Video0");
-    var video_active1 = document.getElementById(category_name + "Video1");
-
-    video_active0.load();
-    video_active1.load();
-    function _play_together() {
-        if (video_active0.readyState >= 4 && video_active1.readyState >= 4) {
-            video_active0.play();
-            video_active1.play();
-        } else {
-            setTimeout(_play_together, 100);
-        }
-    }
-    _play_together();
-
-    // Reinitialize twentytwenty if needed
-    two_column_ratio = 0.285;
-    three_column_ratio = 0.19;
-    if (category_examples[category_name]['columns'] == 2) {
-        ratio = two_column_ratio;
-    } else if (category_examples[category_name]['columns'] == 3) {
-        ratio = three_column_ratio;
-    } else {
-        ratio = two_column_ratio;
-    }
-
-    if (window.jQuery && $.fn.twentytwenty) {
-        $("#" + category_name + "-video-twentytwenty").twentytwenty({ ratio: ratio, default_offset_pct: 0.999, disable_resize: true, is_mobile: is_mobile  });
-    }
-
-    // load labels
-    labels = category_examples[category_name]['labels'][scene];
-    console.log(labels);
-    labels_div = document.getElementById(category_name + "-labels");
-    labels_HTML = ""
-    for (let i = 0; i < labels.length; i++) {
-        labels_HTML += `
-            <div class="column has-text-centered demo-video-label">
-                ${labels[i]}
-            </div>
-        `;
-    }
-    labels_div.innerHTML = labels_HTML;
-
-    // load method description
-    if (category_examples[category_name]['method_descriptions'] && category_examples[category_name]['method_descriptions'][method]) {
-        method_description_div = document.getElementById(category_name + "-method-description");
-        method_description_div.innerHTML = `<span>${category_examples[category_name]['method_descriptions'][method]}</span>`;
-    }
-
-}
-
 function loadAppearanceVideoRow(video_container, category_name, scene) {
     const sceneData = category_examples[category_name]['video_groups'][scene];
     const scenePromptMap = category_examples[category_name]['prompts'] || {};
@@ -1337,128 +1238,7 @@ function loadAppearanceVideoRow(video_container, category_name, scene) {
     }
 }
 
-function loadComparisonVideoContainer(video_container, category_name, method_name, pill) {
-
-    label1 = category_examples[category_name]['labels'][pill][0];
-    label2 = category_examples[category_name]['method_labels'][method_name];
-
-    current_scene = category_examples[category_name]['current_scene'];
-    current_method = category_examples[category_name]['current_method'];
-
-    init_sync = true;
-
-    if (current_scene == null || current_method == null) {
-        video_container.innerHTML = `
-            <div class="columns">
-                <div class="column comparison-video-div">
-                    <video class="comparison-video"  loop playsinline muted>
-                        <source src="./assets/videos/${category_name}/${pill}/input.mp4" />
-                    </video>
-                    <div class="has-text-centered demo-video-label">
-                        Input
-                    </div>
-                </div>
-                <div class="column comparison-video-div">
-                    <video class="comparison-video"  loop playsinline muted id="video-comparison-ref">
-                        <source src="./assets/videos/${category_name}/${pill}/ref.mp4" />
-                    </video>
-                    <div class="has-text-centered demo-video-label">
-                        ${label1}
-                    </div>
-                </div>
-            </div>
-            <div class="columns">            
-                <div class="column comparison-video-div">
-                    <video class="comparison-video"  loop playsinline muted id="video-comparison-baseline">
-                        <source src="./assets/videos/${category_name}/${pill}/${method_name}.mp4" id="src-comparison-baseline" />
-                    </video>
-                    <div class="has-text-centered demo-video-label">
-                        ${label2}
-                    </div>
-                </div>
-                <div class="column comparison-video-div">
-                    <video class="comparison-video"  loop playsinline muted>
-                        <source src="./assets/videos/${category_name}/${pill}/Ours.mp4" />
-                    </video>
-                    <div class="has-text-centered demo-video-label">
-                        Ours
-                    </div>
-                </div>
-            </div>
-        `;
-    } else if (current_method != method_name && current_scene == pill) {
-        // only replace the baseline video while keep playing other videos
-        document.getElementById('src-comparison-baseline').src = `./assets/videos/${category_name}/${pill}/${method_name}.mp4`;
-        vid_baseline_ele = document.getElementById('video-comparison-baseline');
-        vid_baseline_ele.load();
-        vid_ref_ele = document.getElementById('video-comparison-ref');
-        vid_baseline_ele.currentTime = vid_ref_ele.currentTime;
-        if (!vid_ref_ele.paused)
-            vid_baseline_ele.play();
-        init_sync = false;
-        
-    } else {
-        console.log('replace comparison videos');
-        video_container.innerHTML = video_container.innerHTML
-            .replaceAll(category_examples[category_name]['labels'][current_scene][0], label1)
-            .replaceAll(category_examples[category_name]['method_labels'][current_method], label2)
-            .replaceAll(current_scene, pill)
-            .replaceAll(current_method, method_name);
-    }
-    category_examples[category_name]['current_scene'] = pill;
-    category_examples[category_name]['current_method'] = method_name;
-    if (init_sync && window.jQuery && $.fn.syncer) {
-        $("#" + category_name + "-video-container").syncer();
-    }
-}
-
-
-function loadVideoContainer(video_container, category_name, method_name, scene, mode) {
-
-    innerHTML = ``;
-    for (r = 0; r < category_examples[category_name]['method_columns'][method_name].length; r++) {
-        innerHTML += `<div class="columns">`;
-        for (c = 0; c < category_examples[category_name]['method_columns'][method_name][r].length; c++) {
-            col_suffix = category_examples[category_name]['method_columns'][method_name][r][c];
-            if (col_suffix == '') {
-                col_suffix = mode;
-            }
-            filename = `${method_name}/${scene}-${col_suffix}`;
-            console.log(filename);
-            label = col_suffix;
-            column_labels = category_examples[category_name]['column_labels'];
-            if (column_labels && column_labels[method_name] && column_labels[method_name][scene] && column_labels[method_name][scene][col_suffix]) {
-                label = column_labels[method_name][scene][col_suffix];
-            }
-            innerHTML += `
-                <div class="column">
-                    <video class="comparison-video"  loop playsinline muted>
-                        <source src="./assets/videos/${category_name}/${filename}.mp4" />
-                    </video>
-                    <div class="has-text-centered demo-video-label">
-                        ${label}
-                    </div>
-                </div>
-            `;
-        }
-        innerHTML += `</div>`;
-    }
-
-    video_container.innerHTML = innerHTML;
-    if (window.jQuery && $.fn.syncer) {
-        $("#" + category_name + "-video-container").syncer({reset_height: true});
-    }
-
-    // load method description
-    if (category_examples[category_name]['method_descriptions'] && category_examples[category_name]['method_descriptions'][method]) {
-        method_description_div = document.getElementById(category_name + "-method-description");
-        method_description_div.innerHTML = `<span>${category_examples[category_name]['method_descriptions'][method]}</span>`;
-    }
-}
-
-
 function selectVideo(category_name, methodPill, scenePill, modePill) {
-    select = true;
     if (category_examples[category_name]["methods"].length > 1 && methodPill.classList.contains("disabled")) {
         return;
     }
@@ -1561,31 +1341,7 @@ function selectVideo(category_name, methodPill, scenePill, modePill) {
 
     video_container = document.getElementById(category_name + "-video-container");
 
-    if (category_examples[category_name]['is_appearance_gallery']) {
-        loadAppearanceVideoRow(video_container, category_name, scene);
-    } else if (category_examples[category_name]['is_demo']) {
-        loadDemoVideoContainer(video_container, category_name, scene, method, mode);
-    } else if (category_examples[category_name]['is_comparison']) {
-        loadComparisonVideoContainer(video_container, category_name, method, scene);
-    } else {
-        loadVideoContainer(video_container, category_name, method, scene, mode);
-    }
-
-}
-
-
-function selectSceneByName(category_name, scene, method=null) {
-    if (method == null) {
-        method_ele = activeMethodsPill[category_name];
-    } else {
-        method_ele = document.getElementById(category_name + "-method-" + method);
-    }
-    selectVideo(
-        category_name,
-        method_ele,
-        document.getElementById(category_name + "-scene-" + scene),
-        activeModesPill[category_name]
-    );
+    loadAppearanceVideoRow(video_container, category_name, scene);
 }
 
 function initializeInteractiveTeaser() {

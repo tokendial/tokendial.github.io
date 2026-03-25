@@ -22,34 +22,15 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
   <link rel="stylesheet" href="./assets/css/bulma.min.css">
-  <link rel="stylesheet" href="./assets/css/bulma-carousel.min.css">
-  <link rel="stylesheet" href="./assets/css/bulma-slider.min.css">
   <link rel="stylesheet" href="./assets/css/fontawesome.all.min.css">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.8.0/codemirror.min.css">
-
   <link rel="stylesheet"
         href="https://cdn.jsdelivr.net/gh/jpswalsh/academicons@1/css/academicons.min.css">
   <link rel="stylesheet" href="./assets/css/index.css">
-  <link rel="stylesheet" href="./assets/css/twentytwenty.css">
-  <!-- <link rel="stylesheet" href="./assets/css/app.css"> -->
-  <link rel="icon" href="./assets/images/favicon.png" sizes="any" type="image/svg+xml">
-  
-
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.8.0/codemirror.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/1.5.3/clipboard.min.js"></script>
-  <script type="text/javascript" async
-    src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/MathJax.js?config=TeX-MML-AM_CHTML">
-  </script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.5.0/Chart.min.js"></script>
+  <link rel="icon" href="./assets/images/favicon.png" sizes="any" type="image/png">
 
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
   <script defer src="./assets/js/fontawesome.all.min.js"></script>
-  <script src="./assets/js/bulma-carousel.min.js"></script>
-  <script src="./assets/js/bulma-slider.min.js"></script>
   <script src="./assets/js/app.js"></script>
-  <script src="./assets/js/video-syncer.js"></script>
-  <script src="./assets/js/jquery.event.move.js"></script>
-  <script src="./assets/js/jquery.twentytwenty.js"></script>
 </head>
 <body onresize="onResizeWindow()">
 
@@ -83,9 +64,6 @@
             <span class="author-block"><sup>1</sup>Adobe Research &nbsp&nbsp </span>
             <span class="author-block"><sup>2</sup>Carnegie Mellon University</span>
           </div>
-          <!-- <div class="is-size-5 publication-authors" style="padding-top: 0.5em">
-            <span class="author-block"><b>Under review</b></span>
-          </div> -->
           </div>
         </div>
       </div>
@@ -93,11 +71,11 @@
     <div class="column has-text-centered">
       <div class="publication-links">
         <div class="btn-group btn-group-sm main-btn-group">
-          <a target="_blank" rel="noopener noreferrer" href="#"><span class="button is-normal" onclick="">
+          <a target="_blank" rel="noopener noreferrer" href="#"><span class="button is-normal">
             <span class="icon"><i class="fas fa-file-pdf"></i></span>&nbsp&nbsp
             PDF
           </span></a>
-          <a target="_blank" rel="noopener noreferrer" href="#"><span class="button is-normal" onclick="">
+          <a target="_blank" rel="noopener noreferrer" href="#"><span class="button is-normal">
             <span class="icon"><i class="ai ai-arxiv"></i></span>&nbsp&nbsp
             arXiv
           </span></a>
@@ -105,7 +83,7 @@
             <span class="icon"><i class="fas fa-code"></i></span>&nbsp&nbsp
             Coming Soon
           </span>
-          <a href="#bibtex"><span class="button is-normal" onclick="">
+          <a href="#bibtex"><span class="button is-normal">
             <span class="icon"><i class="fas fa-quote-right"></i></span>&nbsp&nbsp
             BibTeX
           </span></a>
@@ -204,16 +182,6 @@
   </div>
 </section>
 
-<!-- <section class="section hide-on-mobile" id="sec:youtube-embed">
-  <div class="container is-max-desktop">
-    <div class="columns is-centered has-text-centered">
-      <div class="column">
-        <iframe width="720" height="480" src="#"></iframe>
-      </div>
-    </div>
-  </div>
-</section> -->
-
 <section id='sec:method-overview' class="hero is-small" style="padding-top: 0; margin-top: 0; padding-bottom: 0; margin-bottom: 0;">
   <div class="container"> 
     <div class="container-fluid demo-container teaser-container" id="div-method">
@@ -235,7 +203,7 @@
               Our framework
             </span></a>
             <a href="#sec:failures"><span class="button is-normal" onclick="" id="navbar-failures">
-              Failure cases
+              Limitations
             </span></a>
           </div>
         </div>
@@ -259,20 +227,20 @@
 <section id='sec:framework' class="hero is-small">
   <div class="container">
     <div class="container-fluid demo-container">
-      <h2 class="title has-text-centered is-3">Our Edit-by-Track Framework</h2>
-      <div class="row bg-dark" id="div-video-framework">
-        <div class="has-text-centered description" id="framework-description">
-            <span>
-              Given a video, we first estimate camera poses and 3D tracks using off-the-shelf models.
-              Users then edit the estimated poses and 3D tracks to specify the desired camera and object motions.
-              <br><br>
-              We project both the original (source) and edited (target) 3D tracks into 2D screen coordinates using their respective camera parameters, aligning them with the video frames.
-              These projected 3D tracks provide sparse correspondences, guiding our model to transfer visual context from the source video onto the target motion.
-              <br><br>
-              Our model builds on a pretrained text-to-video generation model, further fine-tuned with LoRAs and an additional 3D track conditioner for precise motion control.
-              To preserve the original visual context, we encode the input source video into source video tokens and concatenate them with noisy target video tokens.
-              The 3D track conditioner transforms the projected 3D tracks into paired track tokens, which are added the corresponding video tokens to guide the motion editing (see our paper for details).
-            </span>
+      <h2 class="title has-text-centered is-3">Our TokenDial Framework</h2>
+      <div class="row bg-dark">
+        <div class="has-text-centered description">
+          <span>
+            Given a pretrained text-to-video generation model, TokenDial learns lightweight slider controls for continuous video editing without modifying the backbone model weights.
+            Each slider corresponds to a semantic attribute, such as appearance or motion, and allows users to smoothly adjust the strength of an edit from weaker to stronger effects.
+            Instead of changing the model through full fine-tuning, TokenDial operates in the intermediate video token space.
+            Our method learns additive token offsets that are injected into spatiotemporal visual patch tokens inside the video diffusion transformer.
+            <br><br>
+            For appearance sliders, we use semantic direction matching in visual embedding space to encourage the edited output toward the desired attribute direction.
+            For motion sliders, we use motion magnitude scaling to supervise controlled changes in temporal dynamics.
+            <br><br>
+            These learned offsets act as reusable control directions, enabling predictable and progressive changes while largely preserving the identity, background, and overall scene layout of the original generation.
+          </span>
         </div>
         <img src="./assets/images/framework.png" style="padding-left: 8%; padding-right: 8%; padding-bottom: 2em;">
         <div class='has-text-centered demo-video-instruction'>
@@ -294,7 +262,7 @@
 <section id='sec:failures' class="hero is-small">
   <div class="container">
     <div class="container-fluid demo-container">
-      <h2 class="title has-text-centered is-3">Failure Cases</h2>
+      <h2 class="title has-text-centered is-3">Limitations</h2>
       <div class="row bg-dark" id="div-video-failures">
       </div>
     </div>
@@ -305,38 +273,19 @@
   <div class="container">
     <div class="container-fluid demo-container">
       <h2 class="title has-text-centered is-3">References</h2>
-      <div class="row bg-dark" id="div-video-framework">
-        <div class="has-text-justified description" id="framework-description">
-          <strong>Motion-controlled image-to-video (I2V) generation methods</strong>
+      <div class="row bg-dark">
+        <div class="has-text-justified description">
           <ul  id="ulreference">
-            <li id="ref-trajattn">Xiao et al. <a target="_blank" rel="noopener noreferrer" href="https://xizaoqu.github.io/trajattn/">Trajectory Attention For Fine-grained Video Motion Control</a>. ICLR, 2025.</li>
-            <li>Geng et al. <a target="_blank" rel="noopener noreferrer" href="https://motion-prompting.github.io/">Motion Prompting: Controlling Video Generation with Motion Trajectories</a>. CVPR, 2025.</li>
-            <li>Wang et al. <a target="_blank" rel="noopener noreferrer" href="https://ppetrichor.github.io/levitor.github.io/">LeviTor: 3D Trajectory Oriented Image-to-Video Synthesis</a>. CVPR, 2025.</li>
-            <li>Jeong et al. <a target="_blank" rel="noopener noreferrer" href="https://hyeonho99.github.io/track4gen/">Track4Gen: Teaching Video Diffusion Models to Track Points Improves Video Generation</a>. CVPR, 2025.</li>
-            <li>Zhang et al. <a target="_blank" rel="noopener noreferrer" href="https://ali-videoai.github.io/tora_video/">Tora: Trajectory-oriented Diffusion Transformer for Video Generation</a>. CVPR, 2025.</li>
-            <li>Burgert et al. <a target="_blank" rel="noopener noreferrer" href="https://eyeline-labs.github.io/Go-with-the-Flow/">Go-with-the-Flow: Motion-Controllable Video Diffusion Models Using Real-Time Warped Noise</a>. CVPR, 2025.</li>
-            <li id="ref-das">Gu et al. <a target="_blank" rel="noopener noreferrer" href="https://igl-hkust.github.io/das/">Diffusion as Shader: 3D-aware Video Diffusion for Versatile Video Generation Control</a>. SIGGRAPH, 2025.</li>
-            <li>Xing et al. <a target="_blank" rel="noopener noreferrer" href="https://motion-canvas25.github.io/">MotionCanvas: Cinematic Shot Design with Controllable Image-to-Video Generation</a>. SIGGRAPH, 2025.</li>
-            <li id="ref-pac">Chen et al. <a target="_blank" rel="noopener noreferrer" href="https://chen-yingjie.github.io/projects/Perception-as-Control/">Perception-as-control: Fine-grained controllable image animation with 3d-aware motion representation</a>. In ICCV, 2025.</li>
-            <li id="ref-ati">Wang et al. <a target="_blank" rel="noopener noreferrer" href="https://anytraj.github.io/">ATI: Any Trajectory Instruction for Controllable Video Generation.</a> arXiv preprint arXiv:2505.22944, 2025.</li>
+            <li id="ref-trajattn">Ezra et al. <a target="_blank" rel="noopener noreferrer" href="https://azencot-group.github.io/FreeSliders/">Free Sliders: Training-Free Modality-Agnostic Concept Sliders: Fine-Grained Control via Diffusion Models of Images, Audio, and Video</a>. arXiv preprint arXiv:2511.00103, 2025.</li>
+            <li>Chui et al. <a target="_blank" rel="noopener noreferrer" href="https://textslider.github.io/">Text Slider: Efficient and Plug-and-Play Continuous Concept Control for Image/Video Synthesis via LoRA Adapters</a>. WACV, 2026.</li>
+            <li>Gandikota et al. <a target="_blank" rel="noopener noreferrer" href="https://sliders.baulab.info/">Concept Sliders: LoRA Adaptors for Precise Control in Diffusion Models</a>. ECCV, 2024.</li>
+            <li>Gandikota et al. <a target="_blank" rel="noopener noreferrer" href="https://sliderspace.baulab.info/">SliderSpace: Decomposing the Visual Capabilities of Diffusion Models</a>. ICCV, 2025.</li>
+            <li id="ref-das">Parihar et al. <a target="_blank" rel="noopener noreferrer" href="https://snap-research.github.io/kontinuouskontext/">Kontinuous Kontext Continuous Strength Control for Instruction-based Image Editing</a>. CVPR, 2026.</li>
+            <li>Zi et al. <a target="_blank" rel="noopener noreferrer" href="https://senorita-2m-dataset.github.io/">Señorita-2M : A High-Quality Instruction-based Dataset for General Video Editing by Video Specialists</a>. NeurIPS, 2025.</li>
+            <li id="ref-ati">Wei et al. <a target="_blank" rel="noopener noreferrer" href="https://congwei1230.github.io/UniVideo/">UniVideo: Unified Understanding, Generation, and Editing for Videos.</a> arXiv preprint arXiv:2510.08377v3, 2025.</li>
           </ul>
-          <strong>Camera-controlled video-to-video (V2V) methods</strong>
-          <ul  id="ulreference">
-            <li id="ref-gen3c">Ren et al. <a target="_blank" rel="noopener noreferrer" href="https://research.nvidia.com/labs/toronto-ai/GEN3C/">GEN3C: 3D-Informed World-Consistent Video Generation with Precise Camera Control</a>. CVPR, 2025.</li>
-            <li id="ref-trajcrafter">Yu et al. <a target="_blank" rel="noopener noreferrer" href="https://trajectorycrafter.github.io/">TrajectoryCrafter: Redirecting Camera Trajectory for Monocular Videos via Diffusion Models</a>. ICCV, 2025.</li>
-            <li id="ref-recamaster">Bai et al. <a target="_blank" rel="noopener noreferrer" href="https://jianhongbai.github.io/ReCamMaster/">ReCamMaster: Camera-Controlled Generative Rendering from A Single Video</a>. ICCV, 2025.</li>
-            <li>Jeong et al. <a target="_blank" rel="noopener noreferrer" href="https://hyeonho99.github.io/reangle-a-video/">Reangle-A-Video: 4D Video Generation as Video-to-Video Translation</a> ICCV, 2025.</li>
-          </ul>
-          <strong>Relevant Video Motion editing</strong>
-          <ul  id="ulreference">
-            <li id="ref-revideo">Muo et al. <a target="_blank" rel="noopener noreferrer" href="https://mc-e.github.io/project/ReVideo/">ReVideo: Remake a Video with Motion and Content Control</a>. NeurIPS, 2024.</li>
-            <li>Ma et al. <a target="_blank" rel="noopener noreferrer" href="https://magic-stick-edit.github.io/">MagicStick: Controllable Video Editing via Control Handle Transformations</a>. WACV, 2025.</li>
-            <li>Liu et al. <a target="_blank" rel="noopener noreferrer" href="https://shapeformotion.github.io/">Shape-for-Motion: Precise and Consistent Video Editing with 3D Proxy</a>. SIGGRAPH Asia, 2025.</li>
-          </ul>
-          <br>
           <div class="ack">
-            A concurrent work by Burgert et al., <a href="https://ryanndagreat.github.io/MotionV2V/">MotionV2V</a>, also explores video motion editing utilizing 2D point tracks. Their primary focus is on employing few point tracks for more user-friendly editing.
-            We also thank the authors of <a href="https://github.com/Wan-Video/Wan2.1">Wan2.1</a>, <a href="https://github.com/modelscope/DiffSynth-Studio">DiffSynth-Studio</a>, <a href="https://spatialtracker.github.io/">SpatialTrackerV2</a>, and <a href="https://tapip3d.github.io/">TAPIP3D</a> for open-sourcing their codes and models.
+
           </div>
         </div>
         <div class='has-text-centered demo-video-instruction'>
@@ -365,11 +314,12 @@
   <div class="container">
     <div class="container-fluid demo-container">
       <h2 class="title has-text-centered is-3">Societal Impact</h2>
-      <div class="row bg-dark" id="div-video-framework">
+      <div class="row bg-dark">
         <div class="has-text-justified description ack">
-          We recognize that powerful video editing tools, including ours, may raise ethical considerations depending on context.
-          While the work aims to augment human creativity and professional workflows, such capabilities could potentially be misused.
-          We encourage responsible use aligned with community guidelines and maintain transparency about the editing applied. 
+          TokenDial contributes to creative workflows and research on controllable video generation by enabling more precise, interpretable, and flexible control over appearance and motion.
+          Such capabilities may benefit content creation, human-AI collaboration, and the study of more transparent generative video systems.
+          However, like other advanced video editing technologies, these capabilities may also be misused to produce misleading or deceptive media.
+          We encourage responsible deployment, appropriate disclosure of edited content, and further work on safety measures and governance for generative video tools.
         </div>
       </div>
     </div>
@@ -381,7 +331,7 @@
   <div class="container">
     <div class="container-fluid demo-container">
       <h2 class="title has-text-centered is-3">Acknowledgments</h2>
-      <div class="row bg-dark" id="div-video-framework">
+      <div class="row bg-dark">
         <div class="has-text-justified description ack">
           We are grateful for the valuable feedback and insightful discussions provided by
           Xuanlei Zhao, Sheng Li.
