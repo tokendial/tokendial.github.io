@@ -1,0 +1,1635 @@
+
+var activeMethodsPill = {};
+var activeScenesPill = {};
+var activeModesPill = {};
+
+var is_mobile = false;
+
+category_examples = {
+    'appearance-slider': {
+        'scenes': [
+            'appearance-tree-yellow',
+            'appearance-campfire-blue',
+            'appearance-dog-furry',
+            'appearance-person-old',
+            'appearance-snowflake-large-particle',
+            'appearance-aurora-purple',
+            'appearance-campfire-large',
+            'appearance-water-more-droplet',
+            'appearance-snowflake-larger',
+            'appearance-campfire-smaller',
+            'appearance-smoke-thicker',
+            'appearance-person-happier',
+            'appearance-smoke-thick',
+        ],  // first item is default
+        'methods': [''], // disabled
+        'modes': [''],  // disabled
+        'video_groups': {
+            'appearance-tree-yellow': {
+                'folder': '0_tree_yellow',
+                'files': [
+                    'cfg_0.0_attnmask.mp4',
+                    'cfg_2.0_attnmask.mp4',
+                    'cfg_4.0_attnmask.mp4',
+                    'cfg_6.0_attnmask.mp4',
+                    'cfg_8.0_attnmask.mp4',
+                ],
+            },
+            'appearance-person-old': {
+                'folder': '1_person_old',
+                'files': ['0.mp4', '1.mp4', '2.mp4', '3.mp4', '4.mp4'],
+            },
+            'appearance-campfire-blue': {
+                'folder': '2_campfire_blue',
+                'files': ['1.mp4', '3.mp4', '4.mp4', '5.mp4', '6.mp4'],
+            },
+            'appearance-smoke-thick': {
+                'folder': '3_smoke_thick',
+                'files': ['1.mp4', '2.mp4', '3.mp4', '4.mp4', '5.mp4'],
+            },
+            'appearance-campfire-large': {
+                'folder': '4_campfire_large',
+                'files': ['1.mp4', '2.mp4', '3.mp4', '4.mp4', '5.mp4'],
+            },
+            'appearance-aurora-purple': {
+                'folder': '5_aurora_purple',
+                'files': ['1.mp4', '2.mp4', '3.mp4', '4.mp4', '5.mp4'],
+            },
+            'appearance-snowflake-large-particle': {
+                'folder': '6_snowflake_large_particle',
+                'files': ['1.mp4', '2.mp4', '3.mp4', '4.mp4', '5.mp4'],
+            },
+            'appearance-snowflake-larger': {
+                'folder': '7_snowflake_larger',
+                'files': ['1.mp4', '2.mp4', '3.mp4', '4.mp4', '5.mp4'],
+            },
+            'appearance-campfire-smaller': {
+                'folder': '8_campfire_smaller',
+                'files': ['1.mp4', '2.mp4', '3.mp4', '4.mp4', '5.mp4'],
+            },
+            'appearance-person-happier': {
+                'folder': '9_person_happier',
+                'files': ['1.mp4', '2.mp4', '3.mp4', '4.mp4', '5.mp4'],
+            },
+            'appearance-smoke-thicker': {
+                'folder': '10_smoke_thicker',
+                'files': ['1.mp4', '2.mp4', '3.mp4', '4.mp4', '5.mp4'],
+            },
+            'appearance-water-more-droplet': {
+                'folder': '11_water_more_droplet',
+                'files': ['1.mp4', '2.mp4', '3.mp4', '4.mp4', '5.mp4'],
+            },
+            'appearance-dog-furry': {
+                'folder': '12_dog_furry',
+                'files': ['0.mp4', '1.mp4', '2.mp4', '3.mp4', '4.mp4'],
+            },
+        },
+        'prompts': {
+            'appearance-tree-yellow': 'Shifts foliage color from green to autumn tones',
+            'appearance-person-old': 'Make the person older',
+            'appearance-campfire-blue': 'Make the fire bluer',
+            'appearance-smoke-thick': 'Make the smoke thicker',
+            'appearance-campfire-large': 'Make the campfire larger',
+            'appearance-aurora-purple': 'Make the aurora more purple',
+            'appearance-snowflake-large-particle': 'Make the snowflake particles larger',
+            'appearance-snowflake-larger': 'Make the snowflake denser',
+            'appearance-campfire-smaller': 'Make the campfire smaller',
+            'appearance-person-happier': 'Make the person happier',
+            'appearance-smoke-thicker': 'Make the smoke thicker',
+            'appearance-water-more-droplet': 'Add more water droplets',
+            'appearance-dog-furry': 'Make the dog furrier',
+        },
+        'is_demo': false,
+        'is_appearance_gallery': true,
+        'current_scene': null,
+        'description': `
+            Appearance sliders enable continuous, fine-grained control over visual attributes such as color, lighting, texture, as well as structual properties like shape, size, and spatial extent.
+            Unlike prompt-based editing, which often produces discrete or unstable changes, our slider provides a smooth and predictable way to adjust attribute strength. <br> <br>
+            As the slider increases, the edit evolves monotonically—from subtle variations to strong transformations—while preserving identity, background, and overall scene structure.
+        `,
+    },
+    'motion-slider': {
+        'scenes': [
+            'motion-couple-2',
+            'motion-car',
+            'motion-smoke',
+            'motion-ink',
+            'motion-couple',
+            'motion-dog',
+            'motion-wine',
+            'motion-candle',
+        ],  // first item is default
+        'methods': [''], // disabled
+        'modes': [''],  // disabled
+        'video_groups': {
+            'motion-smoke': {
+                'folder': '1_smoke',
+                'files': ['1.mp4', '3.mp4', '4.mp4', '5.mp4', '6.mp4'],
+            },
+            'motion-ink': {
+                'folder': '2_ink',
+                'files': ['2.mp4', '3.mp4', '4.mp4', '5.mp4', '6.mp4'],
+            },
+            'motion-couple': {
+                'folder': '3_couple',
+                'files': ['1.mp4', '2.mp4', '3.mp4', '4.mp4', '5.mp4'],
+            },
+            'motion-couple-2': {
+                'folder': '7_couple',
+                'files': ['1.mp4', '2.mp4', '3.mp4', '4.mp4', '5.mp4'],
+            },
+            'motion-car': {
+                'folder': '8_car',
+                'files': ['4.mp4', '5.mp4', '6.mp4', '8.mp4', '9.mp4'],
+            },
+            'motion-dog': {
+                'folder': '4_dog',
+                'files': ['1.mp4', '2.mp4', '3.mp4', '4.mp4', '5.mp4'],
+            },
+            'motion-wine': {
+                'folder': '5_wine',
+                'files': ['1.mp4', '3.mp4', '4.mp4', '5.mp4', '6.mp4'],
+            },
+            'motion-candle': {
+                'folder': '6_candle',
+                'files': ['-5.mp4', '-3.mp4', '1.mp4', '3.mp4', '5.mp4'],
+            },
+        },
+        'prompts': {
+            'motion-smoke': 'Make the smoke move faster',
+            'motion-ink': 'Make the ink swirl faster',
+            'motion-couple': 'Make the couple from walking to running',
+            'motion-couple-2': "Make the couple's dancing motion more intense",
+            'motion-car': 'Make the car move faster',
+            'motion-dog': 'Make the child and dog from walking to running',
+            'motion-wine': 'Make the wine splash more intensely',
+            'motion-candle': 'Make the candle flame flicker more rapidly',
+        },
+        'is_demo': false,
+        'is_appearance_gallery': true,
+        'current_scene': null,
+        'description': `Motion sliders provide continuous control over motion dynamics, such as intensity, speed, and magnitude.
+                        Increasing the slider amplifies motion in a smooth and consistent manner, while maintaining temporal coherence and preserving the underlying motion pattern.`,
+    },
+    'masking': {
+        'original': '0.mp4',
+        'scale_labels': ['Smaller edit', 'Medium edit', 'Larger edit'],
+        'groups': [
+            {
+                'key': 'older',
+                'label': '"Person <span class="masking-kw" style="color:#2ecc40">Older</span>" Slider',
+                'arrows': ['#2ecc40'],
+                'image': 'older.png',
+                'videos': ['older_2.mp4', 'older_3.mp4', 'older_4.mp4'],
+            },
+            {
+                'key': 'redder',
+                'label': '"Campfire <span class="masking-kw" style="color:#e74c3c">Redder</span>" Slider',
+                'arrows': ['#e74c3c'],
+                'image': 'redder.png',
+                'videos': ['redder_2.mp4', 'redder_4.mp4', 'redder_5.mp4'],
+            },
+            {
+                'key': 'compose',
+                'label_top': '"Campfire <span class="masking-kw" style="color:#9b59b6">Smaller</span>" Slider',
+                'label_bottom': '"Person <span class="masking-kw" style="color:#f39c12">Stronger</span>" Slider',
+                'arrows': ['#9b59b6', '#f39c12'],
+                'image': 'compose.png',
+                'videos': ['compose_1.mp4', 'compose_2.mp4', 'compose_3.mp4'],
+            },
+        ],
+        'description': `Region masking enables localized edits to selected objects or regions while preserving the rest of the scene. The original video is shown on the left, and each row on the right shows progressively stronger masked edits from left to right.`,
+    },
+    'compose-sliders': {
+        'folder': 'compose-ink',
+        'rows': [1, 2, 3, 4],
+        'cols': [1, 2, 3, 4],
+        'axis_top': ['Less red', 'Ink getting redder', 'More red'],
+        'axis_left': ['Less diluted', 'Ink getting diluted', 'More diluted'],
+        'description': `Composed sliders enable simultaneous control over multiple semantic attributes through independent editing directions.
+By combining sliders, users can achieve smooth, predictable joint transformations while maintaining disentanglement between attributes.<br><br>
+Here, color (horizontal) and dilution (vertical) are controlled independently, illustrating that multiple attributes can be composed without mutual interference.`,
+    },
+    'failures': {
+        'is_demo': true,
+        'current_scene': null,
+        'description': `Our method relies on pretrained video understanding models (e.g., InternVideo2) to define semantic directions for appearance control, but the resulting semantic space can remain entangled and inherit biases that are difficult to fully separate.<br><br>Here, the intended “make the person older” direction is entangled with body weight, so increasing the slider may inadvertently change both attributes. Although semantic debiasing via subspace projection can reduce this coupling, it may still fail to isolate aging alone without affecting related appearance properties.`,
+        'prompt': 'Make the person older',
+        'videos': [
+            { 'label': '<br>Original video', 'file': '1.mp4' },
+            { 'label': 'Biased edit <br> (Entangled aging and body weight)', 'file': '2.mp4' },
+            { 'label': '<br>Debiased edit', 'file': '3.mp4' },
+        ],
+    },
+    'comparisons': {
+        'methods': ['freeslider', 'textslider', 'conceptslider', 'sliderspace', 'senorita', 'univideo'],
+        'method_labels': {
+            'conceptslider': 'ConceptSlider',
+            'freeslider':    'FreeSlider',
+            'senorita':      'Kontinuous Kontext + Señorita',
+            'sliderspace':   'SliderSpace',
+            'textslider':    'Text Slider',
+            'univideo':      'UniVideo',
+        },
+        'scenes': [
+            { key: 'campfire_redder', type: 'appearance', prompt: 'Make the campfire redder' },
+            { key: 'happy',           type: 'appearance', prompt: 'Make the person happier' },
+            { key: 'older',           type: 'appearance', prompt: 'Make the person older' },
+            { key: 'snowflake',       type: 'appearance', prompt: 'Make the snowflake particles larger' },
+            { key: 'couple_run',      type: 'motion',     prompt: 'Make the couple running' },
+            { key: 'dance',           type: 'motion',     prompt: 'Make the couple’s dancing motion more intense' },
+            { key: 'smoke',           type: 'motion',     prompt: 'Make the smoke move faster' },
+            { key: 'writer',          type: 'motion',     prompt: 'Make the writer type faster' },
+        ],
+        'default_files': ['video1.mp4', 'video2.mp4', 'video3.mp4', 'video4.mp4', 'video5.mp4'],
+        'video_data': {
+            'campfire_redder': {
+                'ours':           ['0.mp4', 'our_1.mp4', 'our_2.mp4', 'our_3.mp4', 'our_4.mp4'],
+                'conceptslider':  ['0.mp4', 'conceptslider_1.mp4', 'conceptslider_2.mp4', 'conceptslider_3.mp4', 'conceptslider_4.mp4'],
+                'freeslider':     ['0.mp4', 'freeslider_1.mp4', 'freeslider_2.mp4', 'freeslider_3.mp4', 'freeslider_4.mp4'],
+                'senorita':       ['0.mp4', 'senorita_1_web.mp4', 'senorita_2_web.mp4', 'senorita_3_web.mp4', 'senorita_4_web.mp4'],
+                'sliderspace':    ['0.mp4', 'sliderspace_1.mp4', 'sliderspace_2.mp4', 'sliderspace_3.mp4', 'sliderspace_4.mp4'],
+                'textslider':     ['0.mp4', 'textslider_1.mp4', 'textslider_2.mp4', 'textslider_3.mp4', 'textslider_4.mp4'],
+                'univideo':       ['0.mp4', 'slightly.mp4', 'moderately.mp4', 'much.mp4', 'extremely_very.mp4'],
+            },
+            'couple_run': {
+                'ours':           ['0.mp4', 'our_1.mp4', 'our_2.mp4', 'our_3.mp4', 'our_4.mp4'],
+                'conceptslider':  ['0.mp4', 'conceptslider_1.mp4', 'conceptslider_2.mp4', 'conceptslider_3.mp4', 'conceptslider_4.mp4'],
+                'freeslider':     ['0.mp4', 'freeslider_1.mp4', 'freeslider_2.mp4', 'freeslider_3.mp4', 'freeslider_4.mp4'],
+                'senorita':       ['0.mp4', 'senorita_1_web.mp4', 'senorita_2_web.mp4', 'senorita_3_web.mp4', 'senorita_4_web.mp4'],
+                'sliderspace':    ['0.mp4', 'sliderspace_1.mp4', 'sliderspace_2.mp4', 'sliderspace_3.mp4', 'sliderspace_4.mp4'],
+                'textslider':     ['0.mp4', 'textslider_1.mp4', 'textslider_2.mp4', 'textslider_3.mp4', 'textslider_4.mp4'],
+                'univideo':       ['0.mp4', 'univideo_1.mp4', 'univideo_2.mp4', 'univideo_3.mp4', 'univideo_4.mp4'],
+            },
+        },
+        'description': `We compare TokenDial against a diverse set of baselines spanning slider-based and video editing methods.
+  <br>
+  <b>Video sliders</b>: <a href="https://azencot-group.github.io/FreeSliders/">FreeSlider</a>, <a href="https://textslider.github.io/">Text Slider</a>, and two image-based slider methods adapted to text-to-video generation, <a href="https://sliders.baulab.info/">ConceptSlider</a> and <a href="https://sliderspace.baulab.info/">SliderSpace</a>.
+  <br>
+  <b>Slider-based image editing with first-frame propagation</b>: <a href="https://snap-research.github.io/kontinuouskontext/">Kontinuous Kontext</a> combined with <a href="https://senorita-2m-dataset.github.io/">Senorita</a>, which applies image-level slider edits to the first frame and propagates them through the video.
+  <br>
+  <b>Video-to-video editing</b>:  <a href="https://congwei1230.github.io/UniVideo/">UniVideo</a>, a text-guided V2V baseline that edits each strength level independently through prompting.
+  <br><br>
+  These baselines cover reusable slider control, image-to-video propagation, and text-based video editing, providing a broad comparison across methods with different control mechanisms and editing assumptions.`,
+        'current_method': null,
+        'current_scene': null,
+    },
+}
+
+const teaserInteractiveConfig = [
+    {
+        key: "4_cat_kitten",
+        title: "Make the cat more kitten-like",
+        levels: [
+            { scale: 0, src: "./assets/videos/interactive/4_cat_kitten/-1.mp4" },
+            { scale: 1, src: "./assets/videos/interactive/4_cat_kitten/0.mp4" },
+            { scale: 2, src: "./assets/videos/interactive/4_cat_kitten/1.mp4" },
+            { scale: 3, src: "./assets/videos/interactive/4_cat_kitten/2.mp4" },
+            { scale: 4, src: "./assets/videos/interactive/4_cat_kitten/3.mp4" },
+            { scale: 5, src: "./assets/videos/interactive/4_cat_kitten/4.mp4" },
+            { scale: 6, src: "./assets/videos/interactive/4_cat_kitten/5.mp4" },
+        ],
+    },
+    {
+        key: "7_person_old",
+        title: "Make the person older",
+        levels: [
+            { scale: 0, src: "./assets/videos/interactive/7_person_old/0.5.mp4" },
+            { scale: 1, src: "./assets/videos/interactive/7_person_old/1.mp4" },
+            { scale: 2, src: "./assets/videos/interactive/7_person_old/2.mp4" },
+            { scale: 3, src: "./assets/videos/interactive/7_person_old/3.mp4" },
+            { scale: 4, src: "./assets/videos/interactive/7_person_old/4.mp4" },
+            { scale: 5, src: "./assets/videos/interactive/7_person_old/5.mp4" },
+            { scale: 6, src: "./assets/videos/interactive/7_person_old/6.mp4" },
+            { scale: 7, src: "./assets/videos/interactive/7_person_old/7.mp4" },
+            { scale: 8, src: "./assets/videos/interactive/7_person_old/8.mp4" },
+            { scale: 9, src: "./assets/videos/interactive/7_person_old/9.mp4" },
+            { scale: 10, src: "./assets/videos/interactive/7_person_old/10.mp4" },
+        ],
+    },
+    {
+        key: "5_dog_furry",
+        title: "Make the dog furrier",
+        levels: [
+            { scale: 0, src: "./assets/videos/interactive/5_dog_furry/0.mp4" },
+            { scale: 1, src: "./assets/videos/interactive/5_dog_furry/1.mp4" },
+            { scale: 2, src: "./assets/videos/interactive/5_dog_furry/2.mp4" },
+            { scale: 3, src: "./assets/videos/interactive/5_dog_furry/3.mp4" },
+            { scale: 4, src: "./assets/videos/interactive/5_dog_furry/4.mp4" },
+            { scale: 5, src: "./assets/videos/interactive/5_dog_furry/5.mp4" },
+            { scale: 6, src: "./assets/videos/interactive/5_dog_furry/6.mp4" },
+            { scale: 7, src: "./assets/videos/interactive/5_dog_furry/7.mp4" },
+            { scale: 8, src: "./assets/videos/interactive/5_dog_furry/8.mp4" },
+        ],
+    },
+    {
+        key: "8_fire_large",
+        title: "Make the fire larger",
+        levels: [
+            { scale: 0, src: "./assets/videos/interactive/8_fire_large/1.mp4" },
+            { scale: 1, src: "./assets/videos/interactive/8_fire_large/2.mp4" },
+            { scale: 2, src: "./assets/videos/interactive/8_fire_large/3.mp4" },
+            { scale: 3, src: "./assets/videos/interactive/8_fire_large/4.mp4" },
+            { scale: 4, src: "./assets/videos/interactive/8_fire_large/5.mp4" },
+            { scale: 5, src: "./assets/videos/interactive/8_fire_large/6.mp4" },
+        ],
+    },
+    {
+        key: "2_aurora_bright",
+        title: "Make the aurora brighter",
+        levels: [
+            { scale: 0, src: "./assets/videos/interactive/2_aurora_bright/1.mp4" },
+            { scale: 1, src: "./assets/videos/interactive/2_aurora_bright/2.mp4" },
+            { scale: 2, src: "./assets/videos/interactive/2_aurora_bright/3.mp4" },
+            { scale: 3, src: "./assets/videos/interactive/2_aurora_bright/4.mp4" },
+            { scale: 4, src: "./assets/videos/interactive/2_aurora_bright/5.mp4" },
+        ],
+    },
+    {
+        key: "6_snowflake_dense",
+        title: "Make the snowflake larger and denser",
+        levels: [
+            { scale: 0, src: "./assets/videos/interactive/6_snowflake_dense/1.mp4" },
+            { scale: 1, src: "./assets/videos/interactive/6_snowflake_dense/2.mp4" },
+            { scale: 2, src: "./assets/videos/interactive/6_snowflake_dense/3.mp4" },
+            { scale: 3, src: "./assets/videos/interactive/6_snowflake_dense/4.mp4" },
+            { scale: 4, src: "./assets/videos/interactive/6_snowflake_dense/5.mp4" },
+            { scale: 5, src: "./assets/videos/interactive/6_snowflake_dense/6.mp4" },
+        ],
+    },
+    {
+        key: "3_person_old",
+        title: "Make the person older",
+        levels: [
+            { scale: 0, src: "./assets/videos/interactive/3_person_old/2.mp4" },
+            { scale: 1, src: "./assets/videos/interactive/3_person_old/3.mp4" },
+            { scale: 2, src: "./assets/videos/interactive/3_person_old/4.mp4" },
+        ],
+    },
+    {
+        key: "9_explosion_smoky",
+        title: "Make the explosion more smoky",
+        levels: [
+            { scale: 0, src: "./assets/videos/interactive/9_explosion_smoky/1.mp4" },
+            { scale: 1, src: "./assets/videos/interactive/9_explosion_smoky/2.mp4" },
+            { scale: 2, src: "./assets/videos/interactive/9_explosion_smoky/3.mp4" },
+            { scale: 3, src: "./assets/videos/interactive/9_explosion_smoky/4.mp4" },
+            { scale: 4, src: "./assets/videos/interactive/9_explosion_smoky/5.mp4" },
+        ],
+    },
+    {
+        key: "1_campfire_blue",
+        title: "Make the campfire bluer",
+        levels: [
+            { scale: 0, src: "./assets/videos/interactive/1_campfire_blue/2.mp4" },
+            { scale: 1, src: "./assets/videos/interactive/1_campfire_blue/3.mp4" },
+            { scale: 2, src: "./assets/videos/interactive/1_campfire_blue/4.mp4" },
+            { scale: 3, src: "./assets/videos/interactive/1_campfire_blue/5.mp4" },
+            { scale: 4, src: "./assets/videos/interactive/1_campfire_blue/6.mp4" },
+        ],
+    },
+];
+
+
+$(document).ready(function () {
+    const categoryNames = [
+        'appearance-slider',
+        'motion-slider',
+        'compose-sliders',
+        'masking',
+        'failures',
+        'comparisons',
+    ];
+    for (let i = 0; i < categoryNames.length; i++) {
+        const categoryName = categoryNames[i];
+
+        // initialize global-variable active pills
+        activeMethodsPill[categoryName] = null;
+        activeScenesPill[categoryName] = null;
+        activeModesPill[categoryName] = null;
+
+        display_block(categoryName);
+    }
+    var width = (window.innerWidth > 0) ? window.innerWidth : screen.width;
+    is_mobile = (width <= 768);
+    initializeInteractiveTeaser();
+});
+
+
+function onResizeWindow() {
+    var width = (window.innerWidth > 0) ? window.innerWidth : screen.width;
+    is_mobile = (width <= 768);
+}
+
+function display_block(category_name) {
+    var width = (window.innerWidth > 0) ? window.innerWidth : screen.width;
+    is_mobile = (width <= 768);
+    div = document.getElementById('div-video-' + category_name);
+
+    if (category_name === 'compose-sliders') {
+        renderComposeSlidersBlock(div);
+        return;
+    }
+
+    if (category_name === 'masking') {
+        renderMaskingBlock(div);
+        return;
+    }
+
+    if (category_name === 'comparisons') {
+        renderComparisonsBlock(div);
+        return;
+    }
+
+    if (category_name === 'failures') {
+        renderLimitationsBlock(div);
+        return;
+    }
+
+    /******************************************************************************************************************/
+
+    head = `
+        <div class="col-2"></div>
+        <div class="col-md-8">
+        `;
+
+    /******************************************************************************************************************/
+    
+    scene = `
+            <div class="has-text-centered text-center">
+                <div class="pill-row scene-pills" id="${category_name}-scene-pills">
+    `;
+    let num_scenes = category_examples[category_name]['scenes'].length;
+    for (let i = 0; i < num_scenes; i++) {
+        if (!is_mobile && num_scenes > 10 && i == Math.ceil(num_scenes / 2)) {
+            scene += `<br>`;
+        }
+        example = category_examples[category_name]['scenes'][i];
+        active_class = (i == 0) ? 'active' : '';
+        scene += `
+                <span id="${category_name}-scene-${example}" class="pill ${category_name}-scene-pill ${active_class}" data-value="${example}" onclick="selectVideo('${category_name}', activeMethodsPill['${category_name}'], this, activeModesPill['${category_name}'])">
+                    <img class="thumbnail-img" src="assets/thumbnails/${example}.jpg" width="64">
+                </span>
+        `;
+    }
+    scene += `
+            </div>
+    `;
+
+    /******************************************************************************************************************/
+
+    if (category_examples[category_name]['methods'].length == 1 && category_examples[category_name]['methods'][0] == '') {
+        display_method_style = 'display: none;';
+    } else {
+        display_method_style = '';
+    }
+    method = `
+            <div class="text-center" style="color: black; ${display_method_style}" id="${category_name}-method-pills">
+                <div class="btn-group btn-group-sm">
+    `;
+    for (let i = 0; i < category_examples[category_name]['methods'].length; i++) {
+        example = category_examples[category_name]['methods'][i];
+        if (category_examples[category_name]['method_buttons'] && category_examples[category_name]['method_buttons'][example]) {
+            example_display = category_examples[category_name]['method_buttons'][example];
+        } else {
+            example_display = example;
+        }
+        active_class = (i == 0) ? 'active' : '';
+        method += `
+                <span class="button is-normal ${category_name}-method-pill ${active_class}" data-value="${example}" id="${category_name}-method-${example}"
+                    onclick="selectVideo('${category_name}', this, activeScenesPill['${category_name}'], activeModesPill['${category_name}'])">
+                    ${example_display}
+                </span>
+        `;
+    }
+    method += `
+                </div>
+            </div>
+    `;
+    /******************************************************************************************************************/
+
+    description = ``;
+    if (category_examples[category_name]['description']) {
+        description = `
+            <div class="has-text-centered description" id="${category_name}-description">
+                <span>${category_examples[category_name]['description']}</span>
+            </div>
+        `;
+    }
+
+    method_description = ``;
+    if (category_examples[category_name]['method_descriptions'] && category_examples[category_name]['method_descriptions'][example]) {
+        method_description = `
+            <div class="has-text-centered description" id="${category_name}-method-description">
+                <span></span>
+            </div>
+        `;
+    }
+
+    /******************************************************************************************************************/
+
+    if (category_examples[category_name]['modes'].length == 1 && category_examples[category_name]['modes'][0] == '') {
+        display_mode_style = 'display: none';
+    } else {
+        display_mode_style = '';
+    }
+    mode = `
+            <div class="text-center" style="color: black; ${display_mode_style};" id="${category_name}-mode-pills">
+                <div class="btn-group btn-group-sm">
+    `;
+    for (let i = 0; i < category_examples[category_name]['modes'].length; i++) {
+        example = category_examples[category_name]['modes'][i];
+        if (category_examples[category_name]['mode_labels'] && category_examples[category_name]['mode_labels'][example]) {
+            example_display = category_examples[category_name]['mode_labels'][example];
+        } else {
+            example_display = example;
+        }
+        active_class = (i == 0) ? 'active' : '';
+        mode += `
+                <span class="button is-normal ${category_name}-mode-pill ${active_class}" data-value="${example}" id="${category_name}-mode-${example}"
+                    onclick="selectVideo('${category_name}', activeMethodsPill['${category_name}'], activeScenesPill['${category_name}'], this)">
+                    ${example_display}
+                </span>
+        `;
+    }
+    mode += `
+                </div>
+            </div>
+    `;
+
+    /******************************************************************************************************************/
+
+    video_container = `
+            <div id="${category_name}-video-container">
+            </div>
+    `;
+    if (category_examples[category_name]['is_demo']) {
+        label = `
+                <div class='columns' id='${category_name}-labels'>
+                    <div class="column has-text-centered demo-video-label">
+                        Input
+                    </div>
+                    <div class="column has-text-centered demo-video-label">
+                        Output
+                    </div>
+                </div>
+                <br>
+        `;
+    } else {
+        label = ``;
+    }
+
+    /******************************************************************************************************************/
+
+    foot = `
+        </div>
+        <div class="col-2"></div>
+        
+    `;
+    if (category_examples[category_name]['is_demo']) {
+        if (!is_mobile) {
+            instruction = `
+            <div class='has-text-centered demo-video-instruction'>
+                <div class="instruction-centered">
+                    <p>
+                        <span class="icon">
+                            <i class="far fa-hand-point-up"></i>
+                        </span>Click video to pause
+                        &nbsp;&nbsp;&nbsp;&nbsp;                        
+                        <a href="#top"><span class="icon">
+                            <i class="fas fa-chevron-up"></i>
+                        </span>Back to top</a>
+                    </p>
+                </div>
+            </div>
+            `;
+        } else {
+            instruction = `
+            <div class='has-text-centered demo-video-instruction'>
+                <div class="instruction-centered">
+                    <p>
+                        <span class="icon">
+                            <i class="far fa-hand-point-up"></i>
+                        </span>Touch video to pause
+                    </p>
+                </div>
+            </div>
+            `;
+        }
+        
+    } else {
+        if (!is_mobile) {
+            instruction = `
+            <div class='has-text-centered demo-video-instruction'>
+                <br>
+                <div class="instruction-centered">
+                    <p>
+                        <span class="icon">
+                            <i class="far fa-hand-point-up"></i>
+                        </span>Click video to pause
+                        &nbsp;&nbsp;&nbsp;
+                        <a href="#top"><span class="icon">
+                            <i class="fas fa-chevron-up"></i>
+                        </span>Back to top</a>
+                    </p>
+                </div>
+            </div>
+            `;
+        } else {
+            instruction = `
+            <div class='has-text-centered demo-video-instruction'>
+                <div class="instruction-centered">
+                    <p>
+                        <span class="icon">
+                            <i class="far fa-hand-point-up"></i>
+                        </span>Touch video to pause
+                    </p>
+                </div>
+            </div>
+            `;
+        }
+    }
+    foot += instruction;
+
+    /******************************************************************************************************************/
+    div.innerHTML = head + description + method + method_description + mode + scene + video_container + label + foot;
+    activeMethodsPill[category_name] = document.querySelector('.' + category_name + '-method-pill.active');
+    activeScenesPill[category_name] = document.querySelector('.' + category_name + '-scene-pill.active');
+    activeModesPill[category_name] = document.querySelector('.' + category_name + '-mode-pill.active');
+
+    // load default video
+    selectVideo(category_name, activeMethodsPill[category_name], activeScenesPill[category_name], activeModesPill[category_name]);
+
+}
+
+
+function renderComposeSlidersBlock(div) {
+    const composeConfig = category_examples['compose-sliders'];
+    const rows = Array.isArray(composeConfig.rows) ? composeConfig.rows : [];
+    const cols = Array.isArray(composeConfig.cols) ? composeConfig.cols : [];
+    const folder = typeof composeConfig.folder === "string" ? composeConfig.folder : "compose-ink";
+    const axisTop = Array.isArray(composeConfig.axis_top) ? composeConfig.axis_top : ["Less red", "Ink getting redder", "More red"];
+    const axisLeft = Array.isArray(composeConfig.axis_left) ? composeConfig.axis_left : ["More concentrated", "Ink getting diluted", "More diluted"];
+    const description = composeConfig.description ? `
+        <div class="has-text-centered description" id="compose-sliders-description">
+            <span>${composeConfig.description}</span>
+        </div>
+    ` : "";
+    let cellsHTML = "";
+
+    for (let row = 0; row < rows.length; row += 1) {
+        for (let col = 0; col < cols.length; col += 1) {
+            const filename = String(rows[row]) + String(cols[col]) + ".mp4";
+            cellsHTML += `
+                <div class="compose-ink-cell">
+                    <video class="compose-ink-video" playsinline muted preload="auto">
+                        <source src="./assets/videos/${folder}/${filename}" type="video/mp4" />
+                    </video>
+                </div>
+            `;
+        }
+    }
+
+    div.innerHTML = `
+        ${description}
+        <div class="compose-ink-board">
+            <div class="compose-ink-axis-top">
+                <span class="compose-ink-axis-top-spacer" aria-hidden="true"></span>
+                <span class="compose-ink-axis-top-start">${axisTop[0] || ""}</span>
+                <span class="compose-ink-axis-top-center">${axisTop[1] || ""}</span>
+                <span class="compose-ink-axis-top-end">${axisTop[2] || ""}</span>
+            </div>
+            <div class="compose-ink-layout">
+                <div class="compose-ink-axis-left">
+                    <span class="compose-ink-axis-left-start">${axisLeft[0] || ""}</span>
+                    <span class="compose-ink-axis-left-center">${axisLeft[1] || ""}</span>
+                    <span class="compose-ink-axis-left-end">${axisLeft[2] || ""}</span>
+                </div>
+                <div class="compose-ink-grid">
+                    ${cellsHTML}
+                </div>
+            </div>
+        </div>
+        <div class='has-text-centered demo-video-instruction compose-ink-instruction'>
+            <div class="instruction-centered">
+                <p>
+                    <span class="icon">
+                        <i class="far fa-hand-point-up"></i>
+                    </span>Click video to pause
+                    &nbsp;&nbsp;&nbsp;&nbsp;
+                    <a href="#top"><span class="icon">
+                        <i class="fas fa-chevron-up"></i>
+                    </span>Back to top</a>
+                </p>
+            </div>
+        </div>
+    `;
+
+    initializeSyncedVideoGrid(div, ".compose-ink-video", "_composeInkSyncTimer");
+}
+
+
+function renderMaskingBlock(div) {
+    const maskingConfig = category_examples['masking'];
+    const groups = Array.isArray(maskingConfig.groups) ? maskingConfig.groups : [];
+    const scaleLabels = Array.isArray(maskingConfig.scale_labels) ? maskingConfig.scale_labels : [];
+    const description = maskingConfig.description ? `
+        <div class="has-text-centered description" id="masking-description">
+            <span>${maskingConfig.description}</span>
+        </div>
+    ` : "";
+
+    const numGroups = groups.length;
+    let rowsHTML = "";
+    for (let i = 0; i < numGroups; i += 1) {
+        const group = groups[i];
+        const arrows = Array.isArray(group.arrows) ? group.arrows : ['#999'];
+        const videos = Array.isArray(group.videos) ? group.videos : [];
+        const rowBaseDelay = 90 + (i * 130);
+
+        let videosHTML = "";
+        for (let j = 0; j < videos.length; j += 1) {
+            videosHTML += `
+                <div class="masking-video-cell masking-row-item" style="--masking-delay:${rowBaseDelay + 110 + (j * 50)}ms">
+                    <video class="masking-video" playsinline muted preload="auto">
+                        <source src="./assets/videos/masking/${videos[j]}" type="video/mp4" />
+                    </video>
+                </div>`;
+        }
+
+        const guideTopLabel = group.label_top || group.label || "";
+        const guideBottomLabel = group.label_bottom || "";
+
+        const rightArrowColors = arrows.length > 0 ? arrows : ["#64748b"];
+        const arrowSpacing = 16;
+        const rightArrowHeight = rightArrowColors.length === 1 ? 26 : 26 + ((rightArrowColors.length - 1) * arrowSpacing);
+        let rightArrowLines = "";
+        for (let a = 0; a < rightArrowColors.length; a += 1) {
+            const c = rightArrowColors[a];
+            const y = rightArrowColors.length === 1 ? 13 : 7 + (a * arrowSpacing);
+            rightArrowLines += `
+                <line x1="2" y1="${y}" x2="33" y2="${y}" stroke="rgba(255,255,255,0.96)" stroke-width="6.2" stroke-linecap="round"/>
+                <line x1="2" y1="${y}" x2="33" y2="${y}" stroke="${c}" stroke-width="3.2" stroke-linecap="round"/>
+                <polygon points="33,${y - 6} 47,${y} 33,${y + 6}" fill="${c}" stroke="rgba(255,255,255,0.96)" stroke-width="1.2"/>
+            `;
+        }
+        const rightArrow = `<svg class="masking-right-arrow" viewBox="0 0 50 ${rightArrowHeight}" aria-hidden="true">
+            ${rightArrowLines}
+        </svg>`;
+
+        rowsHTML += `
+            <div class="masking-guide-cell masking-row-item" style="--masking-delay:${rowBaseDelay + 35}ms">
+                <div class="masking-guide-label masking-guide-label-top">${guideTopLabel}</div>
+                <div class="masking-guide-img-wrap">
+                    <div class="masking-guide-frame">
+                        <img class="masking-guide-image" src="./assets/videos/masking/${group.image}" alt="Masking guide ${group.key || ""}" />
+                    </div>
+                </div>
+                ${guideBottomLabel ? `<div class="masking-guide-label masking-guide-label-bottom">${guideBottomLabel}</div>` : ""}
+            </div>
+            <div class="masking-arrow-lane masking-row-item" style="--masking-delay:${rowBaseDelay + 55}ms">${rightArrow}</div>
+            ${videosHTML}`;
+    }
+
+    let scaleLabelsHTML = `<div class="masking-scale-spacer"></div><div class="masking-scale-spacer"></div>`;
+    for (let i = 0; i < scaleLabels.length; i += 1) {
+        scaleLabelsHTML += `<div class="masking-scale-label">${scaleLabels[i]}</div>`;
+    }
+
+    div.innerHTML = `
+        ${description}
+        <div class="masking-board">
+            <div class="masking-grid">
+                <div class="masking-original-cell">
+                    <div class="masking-original-label">original video</div>
+                    <div class="masking-original-frame masking-row-item" style="--masking-delay:40ms">
+                        <video class="masking-video masking-original-video" playsinline muted preload="auto">
+                            <source src="./assets/videos/masking/${maskingConfig.original}" type="video/mp4" />
+                        </video>
+                    </div>
+                </div>
+                ${scaleLabelsHTML}
+                ${rowsHTML}
+            </div>
+        </div>
+        <div class='has-text-centered demo-video-instruction masking-instruction'>
+            <div class="instruction-centered">
+                <p>
+                    <span class="icon">
+                        <i class="far fa-hand-point-up"></i>
+                    </span>Click video to pause
+                    &nbsp;&nbsp;&nbsp;&nbsp;
+                    <a href="#top"><span class="icon">
+                        <i class="fas fa-chevron-up"></i>
+                    </span>Back to top</a>
+                </p>
+            </div>
+        </div>
+    `;
+
+    initializeSyncedVideoGrid(div, ".masking-video", "_maskingSyncTimer");
+}
+
+
+function renderComparisonsBlock(div) {
+    var config = category_examples['comparisons'];
+    var methods = config.methods;
+    var methodLabels = config.method_labels;
+    var scenes = config.scenes;
+
+    var descHTML = '';
+    if (config.description) {
+        descHTML = '<div class="has-text-centered description" id="comparisons-description">' +
+            '<span>' + config.description + '</span></div>';
+    }
+
+    var methodPillsHTML = '<div class="text-center" id="comparisons-method-pills">' +
+        '<div class="btn-group btn-group-sm">';
+    for (var i = 0; i < methods.length; i++) {
+        var m = methods[i];
+        var activeClass = (i === 0) ? 'active' : '';
+        methodPillsHTML += '<span class="button is-normal comparisons-method-pill ' + activeClass +
+            '" data-value="' + m + '" id="comparisons-method-' + m +
+            '" onclick="selectComparisonMethod(\'' + m + '\')">' +
+            methodLabels[m] + '</span>';
+    }
+    methodPillsHTML += '</div></div>';
+
+    var appearanceScenes = scenes.filter(function (s) { return s.type === 'appearance'; });
+    var motionScenes = scenes.filter(function (s) { return s.type === 'motion'; });
+
+    var scenePillsHTML = '<div class="has-text-centered text-center">' +
+        '<div class="comparisons-scene-row">';
+
+    scenePillsHTML += '<div class="comparisons-scene-group">' +
+        '<div class="comparisons-scene-group-label">Appearance</div>' +
+        '<div class="pill-row scene-pills">';
+    for (var a = 0; a < appearanceScenes.length; a++) {
+        var as = appearanceScenes[a];
+        var aActive = (a === 0) ? 'active' : '';
+        scenePillsHTML += '<span id="comparisons-scene-' + as.key +
+            '" class="pill comparisons-scene-pill ' + aActive +
+            '" data-value="' + as.key +
+            '" onclick="selectComparisonScene(\'' + as.key + '\')">' +
+            '<img class="thumbnail-img" src="assets/thumbnails/comparisons-appearance-' + as.key + '.jpg" width="64">' +
+            '</span>';
+    }
+    scenePillsHTML += '</div></div>';
+
+    scenePillsHTML += '<div class="comparisons-scene-group">' +
+        '<div class="comparisons-scene-group-label">Motion</div>' +
+        '<div class="pill-row scene-pills">';
+    for (var b = 0; b < motionScenes.length; b++) {
+        var ms = motionScenes[b];
+        var mActive = '';
+        scenePillsHTML += '<span id="comparisons-scene-' + ms.key +
+            '" class="pill comparisons-scene-pill ' + mActive +
+            '" data-value="' + ms.key +
+            '" onclick="selectComparisonScene(\'' + ms.key + '\')">' +
+            '<img class="thumbnail-img" src="assets/thumbnails/comparisons-motion-' + ms.key + '.jpg" width="64">' +
+            '</span>';
+    }
+    scenePillsHTML += '</div></div>';
+    scenePillsHTML += '</div></div>';
+
+    var videoHTML = '<div id="comparisons-video-container"></div>';
+
+    var instruction = '';
+    if (!is_mobile) {
+        instruction = '<div class="has-text-centered demo-video-instruction"><br>' +
+            '<div class="instruction-centered"><p>' +
+            '<span class="icon"><i class="far fa-hand-point-up"></i></span>Click video to pause' +
+            '&nbsp;&nbsp;&nbsp;' +
+            '<a href="#top"><span class="icon"><i class="fas fa-chevron-up"></i></span>Back to top</a>' +
+            '</p></div></div>';
+    } else {
+        instruction = '<div class="has-text-centered demo-video-instruction">' +
+            '<div class="instruction-centered"><p>' +
+            '<span class="icon"><i class="far fa-hand-point-up"></i></span>Touch video to pause' +
+            '</p></div></div>';
+    }
+
+    div.innerHTML = descHTML + methodPillsHTML + scenePillsHTML + videoHTML + instruction;
+
+    config.current_method = methods[0];
+    config.current_scene = scenes[0].key;
+    loadComparisonVideos();
+}
+
+
+function getComparisonSceneObj(sceneKey) {
+    var scenes = category_examples['comparisons'].scenes;
+    for (var i = 0; i < scenes.length; i++) {
+        if (scenes[i].key === sceneKey) return scenes[i];
+    }
+    return null;
+}
+
+
+function loadComparisonVideos() {
+    var config = category_examples['comparisons'];
+    var sceneKey = config.current_scene;
+    var sceneObj = getComparisonSceneObj(sceneKey);
+    if (!sceneObj) return;
+
+    var method = config.current_method;
+    var videoData = config.video_data[sceneKey] || {};
+    var defaultFiles = config.default_files;
+    var container = document.getElementById('comparisons-video-container');
+    var basePath = './assets/videos/comparisons/' + sceneObj.type + '/' + sceneKey;
+    var baselineLabel = config.method_labels[method];
+
+    var oursFiles = videoData['ours'] || defaultFiles;
+    var methodFiles = videoData[method] || defaultFiles;
+
+    var html = '<div class="comparisons-row-label">Ours (TokenDial)</div>';
+    html += '<div class="appearance-video-row">';
+    for (var i = 0; i < oursFiles.length; i++) {
+        html += '<div class="appearance-video-item">' +
+            '<video class="comparison-video appearance-video comparisons-synced-video" loop playsinline muted preload="auto">' +
+            '<source src="' + basePath + '/ours/' + oursFiles[i] + '" />' +
+            '</video></div>';
+    }
+    html += '</div>';
+
+    html += '<div class="comparisons-row-label">' + baselineLabel + '</div>';
+    html += '<div class="appearance-video-row">';
+    for (var j = 0; j < methodFiles.length; j++) {
+        html += '<div class="appearance-video-item">' +
+            '<video class="comparison-video appearance-video comparisons-synced-video" loop playsinline muted preload="auto">' +
+            '<source src="' + basePath + '/' + method + '/' + methodFiles[j] + '" />' +
+            '</video></div>';
+    }
+    html += '</div>';
+
+    if (sceneObj.prompt) {
+        html += '<div class="appearance-prompt">' + sceneObj.prompt + '</div>';
+    }
+
+    container.innerHTML = html;
+    initializeSyncedVideoGrid(container, ".comparisons-synced-video", '_comparisonsSyncTimer');
+}
+
+
+function renderLimitationsBlock(div) {
+    const config = category_examples['failures'];
+    const videos = Array.isArray(config.videos) ? config.videos : [];
+    const description = config.description ? `
+        <div class="has-text-centered description limitations-description" id="failures-description">
+            <span>${config.description}</span>
+        </div>
+    ` : "";
+    const prompt = config.prompt ? `
+        <div class="appearance-prompt limitations-prompt">${config.prompt}</div>
+    ` : "";
+
+    let videoHTML = '<div class="limitations-video-row" id="failures-video-container">';
+    for (let i = 0; i < videos.length; i++) {
+        const item = videos[i];
+        videoHTML += `
+            <div class="limitations-video-item">
+                <div class="limitations-video-label">${item.label}</div>
+                <video class="comparison-video limitations-video failures-synced-video" loop playsinline muted preload="auto">
+                    <source src="./assets/videos/limitations/${item.file}" />
+                </video>
+            </div>
+        `;
+    }
+    videoHTML += '</div>';
+
+    let instruction = '';
+    if (!is_mobile) {
+        instruction = `
+            <div class="has-text-centered demo-video-instruction">
+                <div class="instruction-centered">
+                    <p>
+                        <span class="icon"><i class="far fa-hand-point-up"></i></span>Click video to pause
+                        &nbsp;&nbsp;&nbsp;
+                        <a href="#top"><span class="icon"><i class="fas fa-chevron-up"></i></span>Back to top</a>
+                    </p>
+                </div>
+            </div>
+        `;
+    } else {
+        instruction = `
+            <div class="has-text-centered demo-video-instruction">
+                <div class="instruction-centered">
+                    <p>
+                        <span class="icon"><i class="far fa-hand-point-up"></i></span>Touch video to pause
+                    </p>
+                </div>
+            </div>
+        `;
+    }
+
+    div.innerHTML = description + videoHTML + prompt + instruction;
+    const container = document.getElementById('failures-video-container');
+    if (container) {
+        initializeSyncedVideoGrid(container, ".failures-synced-video", '_limitationsSyncTimer');
+    }
+}
+
+
+function selectComparisonMethod(method) {
+    var config = category_examples['comparisons'];
+    var pills = document.querySelectorAll('.comparisons-method-pill');
+    for (var i = 0; i < pills.length; i++) {
+        pills[i].classList.remove('active');
+    }
+    document.getElementById('comparisons-method-' + method).classList.add('active');
+    config.current_method = method;
+    loadComparisonVideos();
+}
+
+
+function selectComparisonScene(sceneKey) {
+    var config = category_examples['comparisons'];
+    var pills = document.querySelectorAll('.comparisons-scene-pill');
+    for (var i = 0; i < pills.length; i++) {
+        pills[i].classList.remove('active');
+    }
+    document.getElementById('comparisons-scene-' + sceneKey).classList.add('active');
+    config.current_scene = sceneKey;
+    loadComparisonVideos();
+}
+
+
+function initializeSyncedVideoGrid(div, selector, timerKey) {
+    const videos = Array.from(div.querySelectorAll(selector));
+    const masterVideo = videos.length > 0 ? videos[0] : null;
+    let isPlaying = true;
+    let initialized = false;
+
+    if (div[timerKey]) {
+        clearInterval(div[timerKey]);
+        div[timerKey] = null;
+    }
+
+    function pauseAll(anchorTime = null) {
+        if (videos.length === 0) {
+            return;
+        }
+        const targetTime = anchorTime !== null ? anchorTime : videos[0].currentTime;
+        videos.forEach(function (videoEl) {
+            videoEl.pause();
+            videoEl.currentTime = targetTime;
+        });
+        if (div[timerKey]) {
+            clearInterval(div[timerKey]);
+            div[timerKey] = null;
+        }
+    }
+
+    function syncFollowers(forceSync = false) {
+        if (!masterVideo) {
+            return;
+        }
+        const targetTime = masterVideo.currentTime;
+        videos.forEach(function (videoEl, index) {
+            if (index === 0) {
+                return;
+            }
+            if (forceSync || Math.abs(videoEl.currentTime - targetTime) > 0.08) {
+                videoEl.currentTime = targetTime;
+            }
+            if (isPlaying && videoEl.paused) {
+                videoEl.play().catch(function () {});
+            }
+        });
+    }
+
+    function startSyncTimer() {
+        if (div[timerKey] || videos.length <= 1) {
+            return;
+        }
+        div[timerKey] = setInterval(function () {
+            if (isPlaying) {
+                syncFollowers(false);
+            }
+        }, 250);
+    }
+
+    function playAll(anchorTime = null) {
+        const targetTime = anchorTime !== null ? anchorTime : (masterVideo ? masterVideo.currentTime : 0);
+        videos.forEach(function (videoEl) {
+            videoEl.currentTime = targetTime;
+            videoEl.play().catch(function () {});
+        });
+        syncFollowers(true);
+        startSyncTimer();
+    }
+
+    function togglePlayback(event) {
+        const currentVideo = event && event.currentTarget ? event.currentTarget : null;
+        if (isPlaying) {
+            pauseAll(currentVideo ? currentVideo.currentTime : null);
+        } else {
+            playAll();
+        }
+        isPlaying = !isPlaying;
+    }
+
+    function initializePlayback() {
+        if (initialized || videos.length === 0) {
+            return;
+        }
+        const ready = videos.every(function (videoEl) {
+            return videoEl.readyState >= 2;
+        });
+        if (!ready) {
+            return;
+        }
+        initialized = true;
+        playAll(0);
+    }
+
+    if (masterVideo) {
+        masterVideo.addEventListener("ended", function () {
+            if (!isPlaying) {
+                return;
+            }
+            playAll(0);
+        });
+        masterVideo.addEventListener("seeking", function () {
+            syncFollowers(true);
+        });
+        masterVideo.addEventListener("play", function () {
+            if (isPlaying) {
+                startSyncTimer();
+            }
+        });
+    }
+
+    videos.forEach(function (videoEl) {
+        videoEl.addEventListener("click", togglePlayback);
+        videoEl.addEventListener("loadeddata", initializePlayback);
+        videoEl.addEventListener("canplay", initializePlayback);
+    });
+
+    initializePlayback();
+}
+
+
+function loadAppearanceVideoRow(video_container, category_name, scene) {
+    const sceneData = category_examples[category_name]['video_groups'][scene];
+    const scenePromptMap = category_examples[category_name]['prompts'] || {};
+    const scenePrompt = scenePromptMap[scene] || "";
+    if (!sceneData || !sceneData.folder || !Array.isArray(sceneData.files)) {
+        video_container.innerHTML = "";
+        return;
+    }
+
+    let innerHTML = `<div class="appearance-video-row">`;
+    for (let i = 0; i < sceneData.files.length; i++) {
+        const videoPath = `./assets/videos/${category_name}/${sceneData.folder}/${sceneData.files[i]}`;
+        innerHTML += `
+            <div class="appearance-video-item">
+                <video class="comparison-video appearance-video" loop playsinline autoplay muted>
+                    <source src="${videoPath}" />
+                </video>
+            </div>
+        `;
+    }
+    innerHTML += `</div>`;
+    if (scenePrompt !== "") {
+        innerHTML += `
+            <div class="appearance-prompt">
+                ${scenePrompt}
+            </div>
+        `;
+    }
+    video_container.innerHTML = innerHTML;
+
+    const videos = Array.from(video_container.querySelectorAll("video"));
+    let playing = true;
+
+    function pauseAll(anchorTime = null) {
+        if (videos.length === 0) {
+            return;
+        }
+        const setTime = (anchorTime !== null) ? anchorTime : videos[0].currentTime;
+        for (let i = 0; i < videos.length; i++) {
+            videos[i].pause();
+            videos[i].currentTime = setTime;
+        }
+    }
+
+    function playAll() {
+        for (let i = 0; i < videos.length; i++) {
+            videos[i].play().catch(function () {
+                // Ignore autoplay interruptions.
+            });
+        }
+    }
+
+    function toggleAll(event) {
+        const target = event && event.currentTarget ? event.currentTarget : null;
+        if (playing) {
+            pauseAll(target ? target.currentTime : null);
+            playing = false;
+        } else {
+            playAll();
+            playing = true;
+        }
+    }
+
+    for (let i = 0; i < videos.length; i++) {
+        videos[i].addEventListener("click", toggleAll);
+    }
+}
+
+function selectVideo(category_name, methodPill, scenePill, modePill) {
+    if (category_examples[category_name]["methods"].length > 1 && methodPill.classList.contains("disabled")) {
+        return;
+    }
+    if (activeMethodsPill[category_name]) {
+        activeMethodsPill[category_name].classList.remove("active");
+    }
+
+    if (activeScenesPill[category_name]) {
+        activeScenesPill[category_name].classList.remove("active");
+    }
+
+    if (modePill) {
+        activeModesPill[category_name].classList.remove("active");
+        modePill.classList.add("active");
+        activeModesPill[category_name] = modePill;
+    }
+
+    activeMethodsPill[category_name] = methodPill;
+    activeScenesPill[category_name] = scenePill;
+    scenePill.classList.add("active");
+    activeMethodsPill[category_name].classList.add("active");
+    scene = scenePill.getAttribute("data-value");
+    method = activeMethodsPill[category_name].getAttribute("data-value");
+    mode = activeModesPill[category_name].getAttribute("data-value");
+
+    scenes = category_examples[category_name]['scenes'];
+
+    modes = category_examples[category_name]['modes'];
+    first_active_mode_btn = null;
+    if (modes.length > 1 && modes[0] != '') {
+        for (let i = 0; i < modes.length; i++) {
+            btn_mode = document.getElementById(category_name + "-mode-" + modes[i]);
+            enable_modes = category_examples[category_name]['enable_modes'];
+            if (enable_modes && enable_modes[method] && !enable_modes[method].includes(modes[i])) {
+                btn_mode.style.display = "none";
+            } else {
+                if (first_active_mode_btn == null) {
+                    first_active_mode_btn = btn_mode;
+                }
+                btn_mode.style.display = "inline-flex";
+            }
+        }
+        document.getElementById(category_name + "-mode-pills").style.display = "block";
+        if (modePill.style.display == "none") {
+            // select the first available mode
+            if (first_active_mode_btn != null) {
+                selectVideo(category_name, activeMethodsPill[category_name], activeScenesPill[category_name], first_active_mode_btn);
+                return;
+            }
+            document.getElementById(category_name + "-mode-pills").style.display = "none";
+        }
+    }
+
+    enable_scenes = category_examples[category_name]['enable_scenes'];
+    if (enable_scenes && enable_scenes[method] && enable_scenes[method].length == 1) {
+        document.getElementById(category_name + "-scene-pills").style.display = "none";
+    } else {
+        document.getElementById(category_name + "-scene-pills").style.display = "block";
+    }
+
+    first_active_scene_btn = null;
+    for (let i = 0; i < scenes.length; i++) {
+        btn_scene = document.getElementById(category_name + "-scene-" + scenes[i]);
+        if (enable_scenes && enable_scenes[method] && !enable_scenes[method].includes(scenes[i])) {
+            btn_scene.style.display = "none";
+        } else {
+            if (first_active_scene_btn == null) {
+                first_active_scene_btn = btn_scene;
+            }
+            btn_scene.style.display = "inline-flex";
+        }
+    }
+    if (scenePill.style.display == "none") {
+        // select the first available scene
+        selectVideo(category_name, activeMethodsPill[category_name], first_active_scene_btn, activeModesPill[category_name]);
+        return;
+    }
+
+    methods = category_examples[category_name]['methods'];
+    enable_methods = category_examples[category_name]['enable_methods'];
+    first_active_method_btn = null;
+    for (let i = 0; i < methods.length; i++) {
+        btn_method = document.getElementById(category_name + "-method-" + methods[i]);
+        if (enable_methods && enable_methods[scene] && !enable_methods[scene].includes(methods[i])) {
+            // btn_method.style.display = "none";
+            btn_method.classList.add("disabled");
+        } else {
+            if (first_active_method_btn == null) {
+                first_active_method_btn = btn_method;
+            }
+            // btn_method.style.display = "inline-flex";
+            btn_method.classList.remove("disabled");
+        }
+    }
+    if (methodPill.classList.contains("disabled")) {
+        // select the first available method
+        selectVideo(category_name, first_active_method_btn, activeScenesPill[category_name], activeModesPill[category_name]);
+        return;
+    }
+
+    video_container = document.getElementById(category_name + "-video-container");
+
+    loadAppearanceVideoRow(video_container, category_name, scene);
+}
+
+function initializeInteractiveTeaser() {
+    const teaserSection = document.getElementById("interactive-teaser-section");
+    const track = document.getElementById("teaserTrack");
+    const dots = document.getElementById("teaserDots");
+    const prevBtn = document.getElementById("teaserPrevBtn");
+    const nextBtn = document.getElementById("teaserNextBtn");
+
+    if (!teaserSection || !track || !dots || !prevBtn || !nextBtn) {
+        return;
+    }
+
+    const sliderItems = (Array.isArray(teaserInteractiveConfig) ? teaserInteractiveConfig : [])
+        .map(function (item) {
+            const levels = (Array.isArray(item.levels) ? item.levels : [])
+                .filter(function (level) {
+                    return typeof level.scale === "number" && typeof level.src === "string" && level.src.length > 0;
+                })
+                .sort(function (a, b) {
+                    return a.scale - b.scale;
+                });
+            return {
+                key: typeof item.key === "string" ? item.key : "",
+                title: typeof item.title === "string" && item.title.length > 0 ? item.title : "Untitled",
+                levels: levels
+            };
+        })
+        .filter(function (item) {
+            return item.levels.length > 0;
+        });
+
+    if (sliderItems.length === 0) {
+        return;
+    }
+
+    const cardsPerPage = 3;
+    const pages = chunk(sliderItems, cardsPerPage);
+    const cardStates = [];
+    let currentPage = 0;
+    const AUTO_PAGE_MS = 7000;
+    let autoPageTimer = null;
+
+    renderPages();
+    renderDots();
+    updatePaginationUI();
+
+    prevBtn.addEventListener("click", function () {
+        goToPage(currentPage - 1);
+        touchAutoPaging();
+    });
+    nextBtn.addEventListener("click", function () {
+        goToPage(currentPage + 1);
+        touchAutoPaging();
+    });
+
+    teaserSection.addEventListener("mouseenter", clearAutoPaging);
+    teaserSection.addEventListener("mouseleave", scheduleAutoPaging);
+
+    function chunk(items, size) {
+        const result = [];
+        for (let i = 0; i < items.length; i += size) {
+            result.push(items.slice(i, i + size));
+        }
+        return result;
+    }
+
+    function renderPages() {
+        track.innerHTML = "";
+        pages.forEach(function (pageItems, pageIdx) {
+            const pageEl = document.createElement("div");
+            pageEl.className = "teaser-page";
+            pageItems.forEach(function (item) {
+                pageEl.appendChild(buildCard(item, pageIdx));
+            });
+            track.appendChild(pageEl);
+        });
+    }
+
+    function buildCard(item, pageIdx) {
+        const card = document.createElement("article");
+        card.className = "teaser-slider-card";
+
+        const videoStack = document.createElement("div");
+        videoStack.className = "teaser-slider-video-stack";
+        const levelVideos = item.levels.map(function (level, idx) {
+            const videoEl = document.createElement("video");
+            videoEl.className = "teaser-slider-video-layer" + (idx === 0 ? " active" : "");
+            videoEl.muted = true;
+            videoEl.loop = true;
+            videoEl.playsInline = true;
+            videoEl.autoplay = true;
+            videoEl.preload = "auto";
+            videoEl.src = level.src;
+            if (idx === 0) {
+                videoEl.addEventListener("loadedmetadata", function () {
+                    if (videoEl.videoWidth > 0 && videoEl.videoHeight > 0) {
+                        videoStack.style.aspectRatio = String(videoEl.videoWidth / videoEl.videoHeight);
+                    }
+                });
+            }
+            videoStack.appendChild(videoEl);
+            return videoEl;
+        });
+
+        const title = document.createElement("div");
+        title.className = "teaser-slider-card-title";
+        title.textContent = item.title;
+
+        const controls = document.createElement("div");
+        controls.className = "teaser-slider-controls";
+
+        const strengthLabel = document.createElement("span");
+        strengthLabel.className = "teaser-slider-strength";
+        strengthLabel.textContent = "Strength";
+
+        const minusBtn = document.createElement("button");
+        minusBtn.className = "teaser-slider-step-btn";
+        minusBtn.type = "button";
+        minusBtn.textContent = "-";
+        minusBtn.setAttribute("aria-label", "Decrease strength");
+
+        const range = document.createElement("input");
+        range.className = "teaser-slider-input";
+        range.type = "range";
+        range.min = String(item.levels[0].scale);
+        range.max = String(item.levels[item.levels.length - 1].scale);
+        range.step = "0.01";
+        range.value = String(item.levels[0].scale);
+
+        const plusBtn = document.createElement("button");
+        plusBtn.className = "teaser-slider-step-btn";
+        plusBtn.type = "button";
+        plusBtn.textContent = "+";
+        plusBtn.setAttribute("aria-label", "Increase strength");
+
+        controls.appendChild(strengthLabel);
+        controls.appendChild(minusBtn);
+        controls.appendChild(range);
+        controls.appendChild(plusBtn);
+
+        card.appendChild(videoStack);
+        card.appendChild(title);
+        card.appendChild(controls);
+
+        let currentDiscrete = 0;
+        let rafId = null;
+        cardStates.push({ pageIdx: pageIdx, levelVideos: levelVideos });
+        updateStepButtons();
+
+        range.addEventListener("input", function () {
+            touchAutoPaging();
+            if (rafId !== null) {
+                cancelAnimationFrame(rafId);
+            }
+            rafId = requestAnimationFrame(function () {
+                rafId = null;
+                const nextDiscrete = toNearestLevelIndex(Number(range.value), item.levels);
+                switchVisibleLevel(nextDiscrete);
+            });
+        });
+
+        range.addEventListener("change", function () {
+            const nearest = toNearestLevelIndex(Number(range.value), item.levels);
+            range.value = String(item.levels[nearest].scale);
+            switchVisibleLevel(nearest);
+            touchAutoPaging();
+        });
+
+        minusBtn.addEventListener("click", function () {
+            const prevIdx = Math.max(0, currentDiscrete - 1);
+            range.value = String(item.levels[prevIdx].scale);
+            switchVisibleLevel(prevIdx);
+            touchAutoPaging();
+        });
+
+        plusBtn.addEventListener("click", function () {
+            const nextIdx = Math.min(item.levels.length - 1, currentDiscrete + 1);
+            range.value = String(item.levels[nextIdx].scale);
+            switchVisibleLevel(nextIdx);
+            touchAutoPaging();
+        });
+
+        return card;
+
+        function switchVisibleLevel(nextDiscrete) {
+            if (nextDiscrete === currentDiscrete) {
+                return;
+            }
+            const currentVideo = levelVideos[currentDiscrete];
+            const nextVideo = levelVideos[nextDiscrete];
+            if (!nextVideo) {
+                return;
+            }
+            nextVideo.play().catch(function () {});
+            nextVideo.classList.add("active");
+            if (currentVideo && currentVideo !== nextVideo) {
+                currentVideo.classList.remove("active");
+            }
+            currentDiscrete = nextDiscrete;
+            updateStepButtons();
+        }
+
+        function updateStepButtons() {
+            minusBtn.disabled = currentDiscrete <= 0;
+            plusBtn.disabled = currentDiscrete >= item.levels.length - 1;
+        }
+    }
+
+    function toNearestLevelIndex(rawScaleValue, levels) {
+        let nearestIdx = 0;
+        let bestDistance = Math.abs(levels[0].scale - rawScaleValue);
+        for (let i = 1; i < levels.length; i += 1) {
+            const distance = Math.abs(levels[i].scale - rawScaleValue);
+            if (distance < bestDistance) {
+                bestDistance = distance;
+                nearestIdx = i;
+            }
+        }
+        return nearestIdx;
+    }
+
+    function renderDots() {
+        dots.innerHTML = "";
+        pages.forEach(function (_, pageIdx) {
+            const dotBtn = document.createElement("button");
+            dotBtn.className = "teaser-dot";
+            dotBtn.type = "button";
+            dotBtn.setAttribute("aria-label", "Go to page " + (pageIdx + 1));
+            dotBtn.addEventListener("click", function () {
+                goToPage(pageIdx);
+                touchAutoPaging();
+            });
+            dots.appendChild(dotBtn);
+        });
+    }
+
+    function goToPage(nextPage) {
+        if (nextPage < 0 || nextPage > pages.length - 1) {
+            return;
+        }
+        currentPage = nextPage;
+        updatePaginationUI();
+    }
+
+    function updatePaginationUI() {
+        track.style.transform = "translateX(-" + (currentPage * 100) + "%)";
+        prevBtn.disabled = currentPage === 0;
+        nextBtn.disabled = currentPage === pages.length - 1;
+        dots.querySelectorAll(".teaser-dot").forEach(function (dot, idx) {
+            dot.classList.toggle("active", idx === currentPage);
+        });
+        updatePagePlayback();
+        scheduleAutoPaging();
+    }
+
+    function updatePagePlayback() {
+        cardStates.forEach(function (state) {
+            const isActivePage = state.pageIdx === currentPage;
+            state.levelVideos.forEach(function (videoEl) {
+                if (isActivePage) {
+                    videoEl.play().catch(function () {});
+                } else {
+                    videoEl.pause();
+                }
+            });
+        });
+    }
+
+    function clearAutoPaging() {
+        if (autoPageTimer !== null) {
+            clearTimeout(autoPageTimer);
+            autoPageTimer = null;
+        }
+    }
+
+    function scheduleAutoPaging() {
+        clearAutoPaging();
+        if (pages.length <= 1) {
+            return;
+        }
+        autoPageTimer = setTimeout(function () {
+            currentPage = (currentPage + 1) % pages.length;
+            updatePaginationUI();
+        }, AUTO_PAGE_MS);
+    }
+
+    function touchAutoPaging() {
+        scheduleAutoPaging();
+    }
+}
